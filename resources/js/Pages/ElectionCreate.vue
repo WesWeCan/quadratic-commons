@@ -43,13 +43,13 @@ const createUUID = () => {
 
     <FrontLayout>
 
-        <pre>
+        <!-- <pre>
             {{ form.errors }}
         </pre>
 
         <pre>
             {{ form }}
-        </pre>
+        </pre> -->
 
 
           <form @submit.prevent="form.post(route('election.store'))">

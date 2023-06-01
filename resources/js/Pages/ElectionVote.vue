@@ -16,8 +16,8 @@ const page = usePage();
 const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.Election);
 const Vote = ref<VotingTypes.Vote>({
     name: 'Annonymous',
-    remainingCredits: Election.value.credits,
-    motions: Election.value.motions,
+    remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
+    motions: JSON.parse(JSON.stringify(Election.value.motions)),
     election_uuid: Election.value.uuid,
 });
 
@@ -61,6 +61,8 @@ const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
         motion.votes--;
     }
 
+
+    motion.credits = calculateCost(motion.votes);
 }
 
 
@@ -81,20 +83,27 @@ const form = useForm(Vote.value);
 onMounted(() => {
     console.log('Index.vue mounted');
 
-    // for (let i = 1; i <= 10; i++) {
-    //     motions.value.push({
-    //         content: 'Motion ' + i,
-    //         votes: 0,
-    //     });
-    // }
-
-    for (let i = 1; i <= 10; i++) {
-        // castVote(motions.value[0], true);
-    }
+    Vote.value = {
+    name: 'Annonymous',
+    remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
+    motions: JSON.parse(JSON.stringify(Election.value.motions)),
+    election_uuid: Election.value.uuid,
+}
 
 });
 
 
+
+const submitForm = () => {
+    console.log('submitForm');
+
+    form.election_uuid = Election.value.uuid;
+    form.name = Vote.value.name;
+    form.remainingCredits = Vote.value.remainingCredits;
+    form.motions = Vote.value.motions;
+
+    form.post(route('vote.store'))
+}
 
 
 </script>
@@ -107,10 +116,10 @@ onMounted(() => {
     <FrontLayout>
 
 
-
+<!--
         <pre>
         {{ $page.props.election }}
-        </pre>
+        </pre> -->
 
         <div>
             <h1>{{ Election.name }}</h1>
@@ -123,7 +132,7 @@ onMounted(() => {
 
             <div class="motions">
 
-            <div class="motion" v-for="(motion, index) in Election.motions" :key="index">
+            <div class="motion" v-for="(motion, index) in Vote.motions" :key="index">
 
 
                 <h2>{{ motion.content }}</h2>
@@ -144,10 +153,10 @@ onMounted(() => {
 
 
 
-
+<!--
         <pre>
         {{ Vote }}
-        </pre>
+        </pre> -->
 
         <div class="results">
             <h1>My Vote</h1>
@@ -160,11 +169,11 @@ onMounted(() => {
                 </div>
 
 
-                <form @submit.prevent="form.post(route('vote.store'))">
+                <form @submit.prevent="submitForm">
 
-                    <pre>
+                    <!-- <pre>
                     {{ form.errors }}
-                    </pre>
+                    </pre> -->
 
                     <button type="submit">Vote</button>
                 </form>

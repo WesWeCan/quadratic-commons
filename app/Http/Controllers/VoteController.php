@@ -34,6 +34,7 @@ class VoteController extends Controller
     {
 
         $validated = $request->validated();
+        // dd($validated['motions']);
 
         $election = Election::where('uuid', $validated['election_uuid'])->firstOrFail();
 
@@ -45,6 +46,8 @@ class VoteController extends Controller
             'election_id' => $election->id,
         ]);
 
+
+        // dd($vote);
 
         return redirect()->route('election.results', ['uuid' => $election->uuid]);
 

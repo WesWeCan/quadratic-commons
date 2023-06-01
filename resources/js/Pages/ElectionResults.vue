@@ -2,7 +2,7 @@
 
 import FrontLayout from '@/Layouts/FrontLayout.vue';
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { Link, Head, useForm, usePage } from '@inertiajs/vue3';
 
 import * as VotingTypes from '@/types/voting-types';
@@ -14,53 +14,6 @@ const credits = ref<number>(100);
 const page = usePage();
 
 const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.Election);
-const Vote = ref<VotingTypes.Vote>({
-    name: 'Annonymous',
-    remainingCredits: Election.value.credits,
-    motions: Election.value.motions,
-});
-
-
-
-
-/**
- * Casts a vote for a motion using quadratic voting.
- *
- * Quadratic voting is a voting system in which voters can allocate a number of votes to a particular issue,
- * but the cost of each vote increases quadratically with the number of votes allocated.
- * This system allows voters to express the intensity of their preferences more accurately than traditional
- * voting systems, and can help to prevent the tyranny of the majority.
- *
- * @param {Motion} motion - The motion to cast a vote for.
- * @param {boolean} inFavor - Whether the vote is in favor or opposed.
- * @returns {void}
- */
-const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
-
-    // Calculates the cost of a vote using quadratic voting
-    const votesCast = motion.votes;
-    const voteCurrentWorth = Math.pow(votesCast, 2);
-
-    const voteNewWorth = Math.pow(votesCast + (inFavor ? 1 : -1), 2);
-    const voteCost = voteNewWorth - voteCurrentWorth;
-
-    // Checks if the user has enough credits to cast the vote
-    if(Vote.value.remainingCredits - voteCost >= 0 && Vote.value.remainingCredits - voteCost <= Election.value.credits) {
-        Vote.value.remainingCredits -= voteCost;
-    }
-    else {
-        console.log('Not enough credits');
-        return;
-    }
-
-    // Updates the vote count for the motion
-    if(inFavor) {
-        motion.votes++;
-    } else {
-        motion.votes--;
-    }
-
-}
 
 
 const calculateCost = (votes: number) => {
@@ -78,23 +31,52 @@ const calculateCost = (votes: number) => {
 
 
 onMounted(() => {
-    console.log('Index.vue mounted');
-
-    // for (let i = 1; i <= 10; i++) {
-    //     motions.value.push({
-    //         content: 'Motion ' + i,
-    //         votes: 0,
-    //     });
-    // }
-
-    for (let i = 1; i <= 10; i++) {
-        // castVote(motions.value[0], true);
-    }
 
 });
 
 
+const motionVotes = (elctionMotion: VotingTypes.Motion) => {
 
+    let votes = 0;
+
+    if (!Election.value.votes) {
+        return votes;
+    }
+
+    Election.value.votes.forEach((vote) => {
+
+        vote.motions.forEach((voteMotion) => {
+            if (voteMotion.uuid === elctionMotion.uuid) {
+                votes += voteMotion.votes;
+            }
+        });
+
+    });
+
+    return votes;
+};
+
+
+const motionCredits = (elctionMotion: VotingTypes.Motion) => {
+
+    let credits = 0;
+
+    if (!Election.value.votes) {
+        return credits;
+    }
+
+    Election.value.votes.forEach((vote) => {
+
+        vote.motions.forEach((voteMotion) => {
+            if (voteMotion.uuid === elctionMotion.uuid) {
+                credits += voteMotion.credits;
+            }
+        });
+
+    });
+
+    return credits;
+};
 
 </script>
 
@@ -107,52 +89,40 @@ onMounted(() => {
 
 
 
-        <pre>
+
+
+        <div class="election-results">
+
+
+            <div class="election-results__header">
+                <h1>{{ Election.name }}</h1>
+                <p>{{ Election.description }}</p>
+            </div>
+
+
+
+            <div class="motions-results">
+
+                <div class="motion-result" v-for="motion in Election.motions" :key="motion.uuid">
+
+                    <h2>{{ motion.content }}</h2>
+
+                    <div class="motion_votes">
+                        <p>Number of votes: {{ motionVotes(motion) }}</p>
+                        <p>Total Credits spend: {{ motionCredits(motion) }}</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- <pre>
         {{ $page.props.election }}
-        </pre>
-
-        <div>
-            <h1>{{ Election.name }}</h1>
-            <h2>Max Credits: {{ Election.credits }}</h2>
-
-            <h2>Remaining Credits: {{ Vote.remainingCredits }}</h2>
-
-            <label>Name: </label>
-            <input type="text" v-model="Vote.name" />
-
-            <div class="motions">
-
-            <div class="motion" v-for="(motion, index) in Election.motions" :key="index">
-
-
-                <h2>{{ motion.content }}</h2>
-
-                <span>{{ motion.votes }} votes</span>
-
-                <span>Cost: {{ calculateCost(motion.votes) }}</span>
-
-
-                <button @click="castVote(motion, true)">In favor</button>
-                <button @click="castVote(motion, false)">Opposed</button>
-
-                <br /><br />
-            </div>
-            </div>
-        </div>
-
-
-
-        <div class="results">
-            <h1>My Vote</h1>
-
-                <div class="motions-results">
-
-                <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
-                    {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
-                </div>
-                </div>
-
-        </div>
+        </pre> -->
 
 
 
@@ -164,14 +134,18 @@ onMounted(() => {
 
 
 <style scoped>
+.election-results {
+    padding: 3rem;
+}
 
-
-.motions {
+.motions-results {
     display: grid;
     /* auto columns max with */
 
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
+
+    margin-top: 2rem;
 
 }
 
