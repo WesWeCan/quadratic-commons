@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ElectionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,18 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+
+
+
+Route::get('/create', [ElectionController::class, 'create'])->name('election.create');
+Route::post('/store', [ElectionController::class, 'store'])->name('election.store');
+
+Route::get('/e/{uuid}', [ElectionController::class, 'index'])->name('election.vote');
+
+
+
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
