@@ -27,7 +27,10 @@ class StoreElectionRequest extends FormRequest
             'description' => ['string'],
             'credits' => ['required', 'numeric'],
             'motions' => ['required', 'array'],
-            'motions.*' => ['required', 'string'],
+            'motions.*.content' => ['required', 'string'],
+            'motions.*.votes' => ['required', 'numeric'],
+            'motions.*.uuid' => ['required', 'string'],
+            'motions.*.credits' => ['required', 'numeric'],
             // 'options' => ['required', 'array'],
 
         ];

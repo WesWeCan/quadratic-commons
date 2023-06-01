@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ElectionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VoteController;
+use App\Models\Vote;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,10 +32,14 @@ Route::get('/', function () {
 
 
 Route::get('/create', [ElectionController::class, 'create'])->name('election.create');
+
 Route::post('/store', [ElectionController::class, 'store'])->name('election.store');
 
 Route::get('/e/{uuid}', [ElectionController::class, 'index'])->name('election.vote');
+Route::get('/r/{uuid}', [ElectionController::class, 'results'])->name('election.results');
 
+
+Route::post("/v", [VoteController::class, 'store'])->name('vote.store');
 
 
 

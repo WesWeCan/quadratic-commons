@@ -11,7 +11,7 @@ class StoreVoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,16 @@ class StoreVoteRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'remainingCredits' => ['required', 'numeric'],
+            'motions' => ['required', 'array'],
+            'motions.*.content' => ['required', 'string'],
+            'motions.*.votes' => ['required', 'numeric'],
+            'motions.*.uuid' => ['required', 'string'],
+            'motions.*.credits' => ['required', 'numeric'],
+            "election_uuid" => ['required', 'string']
         ];
     }
 }

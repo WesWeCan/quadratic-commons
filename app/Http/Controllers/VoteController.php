@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vote;
+use App\Models\Election;
 use App\Http\Requests\StoreVoteRequest;
 use App\Http\Requests\UpdateVoteRequest;
+
+use Illuminate\Support\Str;
 
 class VoteController extends Controller
 {
@@ -29,7 +32,23 @@ class VoteController extends Controller
      */
     public function store(StoreVoteRequest $request)
     {
-        //
+
+        $validated = $request->validated();
+
+        $election = Election::where('uuid', $validated['election_uuid'])->firstOrFail();
+
+        $vote = Vote::create([
+            'name' => $validated['name'],
+            'uuid' => Str::uuid(),
+            'remainingCredits' => $validated['remainingCredits'],
+            'motions' => $validated['motions'],
+            'election_id' => $election->id,
+        ]);
+
+
+        return redirect()->route('election.results', ['uuid' => $election->uuid]);
+
+
     }
 
     /**

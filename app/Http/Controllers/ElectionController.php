@@ -29,6 +29,20 @@ class ElectionController extends Controller
 
     }
 
+    public function results($uuid)
+    {
+
+        $election = Election::where('uuid', $uuid)->with('votes')->firstOrFail();
+
+
+        return Inertia::render('ElectionResults', [
+            'election' => $election,
+        ]);
+
+
+
+    }
+
     /**
      * Show the form for creating a new resource.
      */

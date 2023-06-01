@@ -16,7 +16,8 @@ return new class extends Migration
             $table->uuid('uuid');
 
             $table->string('name');
-            $table->json("votes");
+            $table->integer('remainingCredits');
+            $table->json("motions");
             $table->foreignId('election_id')->constrained('elections');
 
             $table->timestamps();

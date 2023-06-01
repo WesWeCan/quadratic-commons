@@ -18,7 +18,6 @@ const Vote = ref<VotingTypes.Vote>({
     name: 'Annonymous',
     remainingCredits: Election.value.credits,
     motions: Election.value.motions,
-    election_uuid: Election.value.uuid,
 });
 
 
@@ -75,7 +74,7 @@ const calculateCost = (votes: number) => {
 };
 
 
-const form = useForm(Vote.value);
+
 
 
 onMounted(() => {
@@ -143,12 +142,6 @@ onMounted(() => {
 
 
 
-
-
-        <pre>
-        {{ Vote }}
-        </pre>
-
         <div class="results">
             <h1>My Vote</h1>
 
@@ -158,17 +151,6 @@ onMounted(() => {
                     {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
                 </div>
                 </div>
-
-
-                <form @submit.prevent="form.post(route('vote.store'))">
-
-                    <pre>
-                    {{ form.errors }}
-                    </pre>
-
-                    <button type="submit">Vote</button>
-                </form>
-
 
         </div>
 

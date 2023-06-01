@@ -20,11 +20,19 @@ const form = useForm({
     name: "New Election",
     description: "New Election description",
     credits: 100,
-    motions: [] as string[],
+    motions: [] as VotingTypes.Motion[],
     options: {}
 });
 
 
+const createUUID = () => {
+    console.log('createUUID');
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
 
 
 </script>
@@ -34,6 +42,15 @@ const form = useForm({
     <Head title="Create Motion" />
 
     <FrontLayout>
+
+        <pre>
+            {{ form.errors }}
+        </pre>
+
+        <pre>
+            {{ form }}
+        </pre>
+
 
           <form @submit.prevent="form.post(route('election.store'))">
 
@@ -55,7 +72,7 @@ const form = useForm({
             <div class="motions-form">
 
                 <div class="motion" v-for="(motion, index) in form.motions" :key="index">
-                    <input type="text" v-model="form.motions[index]" />
+                    <input type="text" v-model="form.motions[index].content" />
 
                     <button
                         @click.prevent="() => form.motions.splice(index - 1, 0, form.motions.splice(index, 1)[0])">Up</button>
@@ -65,7 +82,12 @@ const form = useForm({
 
                 </div>
 
-                <button @click.prevent="form.motions.push(`Motion ${form.motions.length + 1}`)">Add Motion</button>
+                <button @click.prevent="form.motions.push({
+                    content: `Motion ${form.motions.length + 1}`,
+                    votes: 0,
+                    uuid: createUUID(),
+                    credits: 0,
+                    })">Add Motion</button>
             </div>
 
 
