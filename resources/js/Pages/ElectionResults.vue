@@ -88,7 +88,8 @@ const motionCredits = (elctionMotion: VotingTypes.Motion) => {
     <FrontLayout>
 
 
-
+<!-- ranking -->
+<!-- percentages  -->
 
 
         <div class="election-results">

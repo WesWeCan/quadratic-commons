@@ -6,6 +6,10 @@ import { onMounted, ref } from 'vue';
 import { Link, Head, useForm, usePage } from '@inertiajs/vue3';
 
 import * as VotingTypes from '@/types/voting-types';
+import AllCredits from '@/Components/Visualizer/AllCredits.vue';
+import VoteVisualizer from '@/Components/Visualizer/VoteVisualizer.vue';
+
+
 
 
 const maxCredits = ref<number>(100);
@@ -183,7 +187,9 @@ const submitForm = () => {
 
 
 
+        <AllCredits></AllCredits>
 
+        <VoteVisualizer></VoteVisualizer>
 
     </FrontLayout>
 </template>

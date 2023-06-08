@@ -21,6 +21,8 @@
         "vue-tsc": "^1.2.0"
     },
     "dependencies": {
-        "sass": "^1.62.1"
+        "@jamescoyle/vue-icon": "^0.1.2",
+        "@mdi/js": "^7.2.96",
+        "sass": "^1.63.2"
     }
 }
