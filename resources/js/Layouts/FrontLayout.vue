@@ -10,8 +10,10 @@
 
 <template>
 
-
+<div class="front-layout">
 <slot></slot>
+
+</div>
 
 
 

@@ -135,34 +135,5 @@ const motionCredits = (elctionMotion: VotingTypes.Motion) => {
 
 
 <style scoped>
-.election-results {
-    padding: 3rem;
-}
 
-.motions-results {
-    display: grid;
-    /* auto columns max with */
-
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-
-    margin-top: 2rem;
-
-}
-
-.motion {
-    padding: 2rem;
-
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-    align-items: flex-start;
-
-    gap: 10px;
-}
-
-button {
-    padding: 1rem;
-    background-color: beige;
-}
 </style>

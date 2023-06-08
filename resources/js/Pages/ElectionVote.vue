@@ -50,7 +50,7 @@ const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
     const voteCost = voteNewWorth - voteCurrentWorth;
 
     // Checks if the user has enough credits to cast the vote
-    if(Vote.value.remainingCredits - voteCost >= 0 && Vote.value.remainingCredits - voteCost <= Election.value.credits) {
+    if (Vote.value.remainingCredits - voteCost >= 0 && Vote.value.remainingCredits - voteCost <= Election.value.credits) {
         Vote.value.remainingCredits -= voteCost;
     }
     else {
@@ -59,7 +59,7 @@ const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
     }
 
     // Updates the vote count for the motion
-    if(inFavor) {
+    if (inFavor) {
         motion.votes++;
     } else {
         motion.votes--;
@@ -88,11 +88,11 @@ onMounted(() => {
     console.log('Index.vue mounted');
 
     Vote.value = {
-    name: 'Annonymous',
-    remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
-    motions: JSON.parse(JSON.stringify(Election.value.motions)),
-    election_uuid: Election.value.uuid,
-}
+        name: 'Annonymous',
+        remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
+        motions: JSON.parse(JSON.stringify(Election.value.motions)),
+        election_uuid: Election.value.uuid,
+    }
 
 });
 
@@ -114,113 +114,98 @@ const submitForm = () => {
 
 
 <template>
-
     <Head :title="($page.props.election as VotingTypes.Election).name" />
 
     <FrontLayout>
 
 
-<!--
-        <pre>
-        {{ $page.props.election }}
-        </pre> -->
+        <h1>{{ Election.name }}</h1>
 
-        <div>
-            <h1>{{ Election.name }}</h1>
-            <h2>Max Credits: {{ Election.credits }}</h2>
+        <label>My Name:</label>
+        <input type="text" v-model="Vote.name" />
 
-            <h2>Remaining Credits: {{ Vote.remainingCredits }}</h2>
-
-            <label>Name: </label>
-            <input type="text" v-model="Vote.name" />
-
-            <div class="motions">
-
-            <div class="motion" v-for="(motion, index) in Vote.motions" :key="index">
+        <section class="election">
 
 
-                <h2>{{ motion.content }}</h2>
+            <div class="left-sidebar sidebar">
+                <h2>Max Credits: {{ Election.credits }}</h2>
 
-                <span>{{ motion.votes }} votes</span>
+                <h2>Remaining Credits: {{ Vote.remainingCredits }}</h2>
 
-                <span>Cost: {{ calculateCost(motion.votes) }}</span>
-
-
-                <button @click="castVote(motion, true)">In favor</button>
-                <button @click="castVote(motion, false)">Opposed</button>
-
-                <br /><br />
+                <AllCredits></AllCredits>
             </div>
-            </div>
-        </div>
+
+            <main>
+                <div class="motions">
+
+                    <div class="motion" v-for="(motion, index) in Vote.motions" :key="index">
 
 
 
+                        <div class="motion-header">
+                            <span>Question {{ index + 1 }} of {{ Vote.motions.length }}</span>
 
-<!--
-        <pre>
-        {{ Vote }}
-        </pre> -->
+                            <strong>{{ motion.content }}</strong>
+                        </div>
 
-        <div class="results">
-            <h1>My Vote</h1>
 
-                <div class="motions-results">
+                        <div class="motion-body">
+                            <VoteVisualizer></VoteVisualizer>
 
-                <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
-                    {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
+
+                            <div class="motion-vote-container">
+
+
+                                <div class="favor button-container">
+                                    <button @click="castVote(motion, true)">In favor</button>
+                                    <span>{{ motion.votes }} votes</span>
+                                    <span>Cost: {{ calculateCost(motion.votes) }}</span>
+                                </div>
+
+                                <div class="opposed button-container">
+                                    <button @click="castVote(motion, false)">Opposed</button>
+                                    <span>{{ motion.votes }} votes</span>
+                                    <span>Cost: {{ calculateCost(motion.votes) }}</span>
+                                </div>
+
+                            </div>
+
+
+                            <VoteVisualizer></VoteVisualizer>
+                        </div>
+
+                    </div>
                 </div>
-                </div>
-
 
                 <form @submit.prevent="submitForm">
+            <!-- <pre>
+{{ form.errors }}
+</pre> -->
 
-                    <!-- <pre>
-                    {{ form.errors }}
-                    </pre> -->
+            <button type="submit">Vote</button>
+        </form>
+            </main>
 
-                    <button type="submit">Vote</button>
-                </form>
+            <div class="right-sidebar sidebar">
+                <div class="results">
+                    <h1>My Vote</h1>
+
+                    <div class="motions-results">
+
+                        <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
+                            {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
+                        </div>
+                    </div>
 
 
-        </div>
 
 
 
-        <AllCredits></AllCredits>
-
-        <VoteVisualizer></VoteVisualizer>
+                </div>
+            </div>
+        </section>
 
     </FrontLayout>
 </template>
 
 
-
-<style scoped>
-
-
-.motions {
-    display: grid;
-    /* auto columns max with */
-
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-
-}
-
-.motion {
-    padding: 2rem;
-
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-    align-items: flex-start;
-
-    gap: 10px;
-}
-
-button {
-    padding: 1rem;
-    background-color: beige;
-}
-</style>

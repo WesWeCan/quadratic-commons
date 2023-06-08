@@ -107,43 +107,5 @@ const createUUID = () => {
 
 
 <style scoped>
-form {
 
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-
-    padding: 3rem;
-
-
-}
-
-.error {
-    color: red;
-}
-
-.motions {
-    display: grid;
-    /* auto columns max with */
-
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-
-}
-
-.motion {
-    padding: 2rem;
-
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-    align-items: flex-start;
-
-    gap: 10px;
-}
-
-button {
-    padding: 1rem;
-    background-color: beige;
-}
 </style>
