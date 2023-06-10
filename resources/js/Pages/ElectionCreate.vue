@@ -6,6 +6,13 @@ import { onMounted, ref } from 'vue';
 import { Link, Head, useForm } from '@inertiajs/vue3';
 
 import * as VotingTypes from '@/types/voting-types';
+import VoteVisualizer from '@/Components/Visualizer/VoteVisualizer.vue';
+
+
+
+
+import { mdiPlus, mdiMinus } from '@mdi/js';
+import SvgIcon from '@jamescoyle/vue-icon';
 
 
 onMounted(() => {
@@ -14,7 +21,7 @@ onMounted(() => {
 
 });
 
-
+const tempCredits = ref(10);
 
 const form = useForm({
     name: "New Election",
@@ -33,6 +40,24 @@ const createUUID = () => {
         return v.toString(16);
     });
 };
+
+
+const changeCredits = (increases : boolean) => {
+
+    if(tempCredits.value <= 1 && !increases) {
+        return;
+    }
+
+    if (increases) {
+        tempCredits.value++;
+    } else {
+        tempCredits.value--;
+    }
+
+    form.credits = Math.pow(tempCredits.value,2);
+
+};
+
 
 
 </script>
@@ -64,8 +89,13 @@ const createUUID = () => {
 
 
             <label for="credits">Credits</label>
-            <input type="number" id="credits" v-model="form.credits" />
+            <input type="number" id="credits" v-model="form.credits" disabled/>
+            <button @click.prevent="changeCredits(true)"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" size="14"></svg-icon> </button>
+            <button @click.prevent="changeCredits(false)"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" size="14"></svg-icon></button>
             <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div>
+
+
+            <VoteVisualizer :credits="form.credits" :opposed="false" />
 
             <label for="motions">Motions</label>
             <div class="error" v-if="form.errors.motions">{{ form.errors.motions }}</div>

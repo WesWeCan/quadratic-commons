@@ -155,3 +155,103 @@ h1 {
 
 
 }
+
+
+.cost-calculation {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+
+
+.all-credits {
+
+    width: max-content;
+
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: auto;
+
+    gap: .1rem;
+
+
+
+
+    &.visualizer {
+
+        width: max-content;
+
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-auto-rows: repeat(10, 1fr);
+
+
+
+
+        @for $i from 1 through 999 {
+            &.r-#{$i} {
+                grid-template-columns: repeat(#{$i}, 1fr);
+                grid-auto-rows: repeat(#{$i}, 1fr);
+            }
+        }
+
+
+
+        gap: .1rem;
+
+
+        margin-top: 5rem;
+        padding: 2rem;
+
+
+        transform: rotate(90deg+45deg);
+
+        &.opposed {
+            transform: rotate(-90deg+45deg);
+        }
+
+    }
+
+
+
+    .credit {
+        position: relative;
+
+        transition: all .5s ease-in-out;
+
+        width: 14px;
+        height: 14px;
+
+        &.movable {
+            top: 0;
+            left: 0;
+            position: absolute;
+            z-index: 1;
+        }
+
+        .circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .credit-bg {
+            color: lightgray;
+        }
+
+        .credit-front {
+            color: black;
+        }
+    }
+}
+
+
+
+
+
+
+
+

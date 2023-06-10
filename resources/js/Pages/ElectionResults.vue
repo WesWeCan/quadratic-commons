@@ -109,7 +109,10 @@ const motionCredits = (elctionMotion: VotingTypes.Motion) => {
                     <h2>{{ motion.content }}</h2>
 
                     <div class="motion_votes">
-                        <p>Number of votes: {{ motionVotes(motion) }}</p>
+                        <p>Ranking: X</p>
+                        <p>Vote: {{ motionVotes(motion) }}</p>
+                        <p>Number of votes in favor: {{ motionVotes(motion) }}</p>
+                        <p>Number of votes opposed: {{ motionVotes(motion) }}</p>
                         <p>Total Credits spend: {{ motionCredits(motion) }}</p>
                     </div>
 
@@ -121,9 +124,9 @@ const motionCredits = (elctionMotion: VotingTypes.Motion) => {
         </div>
 
 
-        <!-- <pre>
+        <pre>
         {{ $page.props.election }}
-        </pre> -->
+        </pre>
 
 
 

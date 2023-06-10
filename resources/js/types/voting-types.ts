@@ -3,6 +3,7 @@ export interface Motion {
     votes: number;
     uuid: string;
     credits: number;
+    visualCredits?: Credit[];
 };
 
 
@@ -45,4 +46,12 @@ export interface Vote {
 
     created_at?: string;
     updated_at?: string;
+}
+
+
+
+
+export interface Credit {
+    creditCode: string;
+    targetCode: string;
 }
