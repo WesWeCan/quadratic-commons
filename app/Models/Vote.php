@@ -14,7 +14,7 @@ class Vote extends Model
         'name',
         'remainingCredits',
         'motions',
-
+        "votecode",
         'election_id',
 
     ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Election;
 use App\Http\Requests\StoreElectionRequest;
 use App\Http\Requests\UpdateElectionRequest;
+use App\Models\Vote;
 use Inertia\Inertia;
 
 use illuminate\Support\Str;
@@ -31,7 +32,6 @@ class ElectionController extends Controller
 
     public function results($uuid)
     {
-
         $election = Election::where('uuid', $uuid)->with('votes')->firstOrFail();
 
 
@@ -39,7 +39,20 @@ class ElectionController extends Controller
             'election' => $election,
         ]);
 
+    }
 
+
+    public function resultsWithCode($uuid, $votecode)
+    {
+        $election = Election::where('uuid', $uuid)->with('votes')->firstOrFail();
+
+        $myVoteUuid = Vote::where('votecode', $votecode)->firstOrFail()->uuid;
+
+        return Inertia::render('ElectionResults', [
+            'election' => $election,
+            "myVoteCode" => $votecode,
+            'myVoteUuid' => $myVoteUuid,
+        ]);
 
     }
 
@@ -59,8 +72,6 @@ class ElectionController extends Controller
     {
 
         $validated = $request->validated();
-
-
 
         $election = Election::create([
             'name' => $validated['name'],

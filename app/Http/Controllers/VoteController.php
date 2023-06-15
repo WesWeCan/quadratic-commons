@@ -43,13 +43,14 @@ class VoteController extends Controller
             'uuid' => Str::uuid(),
             'remainingCredits' => $validated['remainingCredits'],
             'motions' => $validated['motions'],
+            "votecode" => str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT),
             'election_id' => $election->id,
         ]);
 
 
         // dd($vote);
 
-        return redirect()->route('election.results', ['uuid' => $election->uuid]);
+        return redirect()->route('election.results.code', ['uuid' => $election->uuid, 'votecode' => $vote->votecode]);
 
 
     }

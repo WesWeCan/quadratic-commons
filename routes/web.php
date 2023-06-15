@@ -38,6 +38,7 @@ Route::post('/store', [ElectionController::class, 'store'])->name('election.stor
 
 Route::get('/e/{uuid}', [ElectionController::class, 'index'])->name('election.vote');
 Route::get('/r/{uuid}', [ElectionController::class, 'results'])->name('election.results');
+Route::get('/r/{uuid}/{votecode}', [ElectionController::class, 'resultsWithCode'])->name('election.results.code');
 
 
 Route::post("/v", [VoteController::class, 'store'])->name('vote.store');
