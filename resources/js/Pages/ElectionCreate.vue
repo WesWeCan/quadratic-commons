@@ -21,10 +21,11 @@ const tempCredits = ref(10);
 const maxIssues = 10;
 const minIssues = 2;
 
+const maxTempCredits = 10;
+const minTempCredits = 1;
+
 onMounted(() => {
     console.log('Index.vue mounted');
-
-
 
    for(let i = 0; i < minIssues; i++) {
        addIssue();
@@ -43,7 +44,7 @@ const credits = computed<number>(() => {
 const form = useForm({
     name: "New Voting Round",
     description: "Description",
-    credits: -1,
+    credits: 100,
     motions: [] as VotingTypes.Motion[],
     options: {}
 });
@@ -51,7 +52,10 @@ const form = useForm({
 
 const submit = () => {
     console.log('submit');
-    form.credits = credits.value;
+    // form.credits = credits.value;
+
+    form.credits = Math.pow(tempCredits.value, 2);
+
     form.post(route('election.store'));
 };
 
@@ -78,6 +82,14 @@ const changeCredits = (increases: boolean) => {
         tempCredits.value++;
     } else {
         tempCredits.value--;
+    }
+
+    if(tempCredits.value > maxTempCredits) {
+        tempCredits.value = maxTempCredits;
+    }
+
+    if(tempCredits.value < minTempCredits) {
+        tempCredits.value = minTempCredits;
     }
 
     form.credits = Math.pow(tempCredits.value, 2);
@@ -180,14 +192,22 @@ const moveIssue = (index: number, up : boolean) => {
 
 
 
-            <label for="credits">Spendable credits {{ credits }}</label>
-            <VoteVisualizer :credits="credits" :opposed="false" />
+            <label for="credits">Spendable credits: {{ form.credits }}</label>
 
 
-            <!-- <input type="number" id="credits" v-model="form.credits" disabled/>
-            <button @click.prevent="changeCredits(true)"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" size="14"></svg-icon> </button>
-            <button @click.prevent="changeCredits(false)"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" size="14"></svg-icon></button>
-            <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div> -->
+            <div class="credits-form">
+            <input type="number" id="credits" v-model="form.credits" disabled/>
+            <button @click.prevent="changeCredits(true)" :disabled="tempCredits >= maxTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" size="14"></svg-icon> Add credits</button>
+            <button @click.prevent="changeCredits(false)" :disabled="tempCredits <= minTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" size="14"></svg-icon> Remove credits</button>
+            <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div>
+
+            <div class="credits-form-visualizer">
+            <VoteVisualizer :credits="form.credits" :opposed="true" />
+        </div>
+        </div>
+
+
+
 
 
             <button type="submit">Create voting round</button>

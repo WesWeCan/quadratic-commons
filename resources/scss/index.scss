@@ -299,6 +299,29 @@ table {
     }
 }
 
+
+.credits-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    padding: 3rem;
+
+
+    button {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+}
+
+.credits-form-visualizer {
+display: flex;
+justify-content: flex-start;
+}
+
+
 .motions-results {
     display: grid;
     /* auto columns max with */
