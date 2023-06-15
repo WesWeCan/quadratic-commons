@@ -19,7 +19,7 @@ import { computed } from 'vue';
 
 const tempCredits = ref(10);
 const maxIssues = 10;
-const minIssues = 1;
+const minIssues = 2;
 
 onMounted(() => {
     console.log('Index.vue mounted');

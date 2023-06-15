@@ -16,7 +16,7 @@ const page = usePage();
 
 const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.Election);
 const Vote = ref<VotingTypes.Vote>({
-    name: 'Annonymous',
+    name: '',
     remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
     motions: JSON.parse(JSON.stringify(Election.value.motions)),
     election_uuid: Election.value.uuid,
@@ -91,7 +91,7 @@ onMounted(() => {
     console.log('Index.vue mounted');
 
     Vote.value = {
-        name: 'Annonymous',
+        name: '',
         remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
         motions: JSON.parse(JSON.stringify(Election.value.motions)),
         election_uuid: Election.value.uuid,
@@ -111,7 +111,7 @@ const submitForm = () => {
     console.log('submitForm');
 
     form.election_uuid = Election.value.uuid;
-    form.name = Vote.value.name;
+    form.name = Vote.value.name ? Vote.value.name : "Unknown";
     form.remainingCredits = Vote.value.remainingCredits;
     form.motions = Vote.value.motions;
 
@@ -336,32 +336,49 @@ const updateCredits = async () => {
 
 
         <h1>{{ Election.name }}</h1>
-        <span>Link to this election: <a :href="route('election.vote', { uuid: Election.uuid })">{{route('election.vote', { uuid: Election.uuid })}}</a></span>
+        <p>{{ Election.description }}</p>
 
-        <label>My Name:</label>
+        <br />
+        <span>Link to this election: <a :href="route('election.vote', { uuid: Election.uuid })">{{ route('election.vote', {
+            uuid: Election.uuid
+        }) }}</a></span>
+
+        <label>Name:</label>
         <input type="text" v-model="Vote.name" />
 
         <section class="election">
 
 
             <div class="left-sidebar sidebar">
-                <button @click="moveCredit">Move Credit</button>
 
 
-                <h2>Max Credits: {{ Election.credits }}</h2>
 
-                <h2>Remaining Credits: {{ Vote.remainingCredits }}</h2>
+                <h2>Credits remaining:</h2>
+                <h2>{{ Vote.remainingCredits }}</h2>
+                <h3>Max Credits: {{ Election.credits }}</h3>
 
                 <AllCredits :credits="Election.credits"></AllCredits>
 
 
                 <br />
 
-                <div class="cost-calculation">
-                    <span v-for="v in Math.sqrt(Election.credits)" :key="v">
-                        {{ `${v} votes - ${calculateCost(v)} credits` }}
-                    </span>
-                </div>
+                <table class="cost-calculation">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Cost Calculation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Votes</th>
+                            <th>Credits</th>
+                        </tr>
+                        <tr v-for="v in Math.sqrt(Election.credits)" :key="v">
+                            <td>{{ v }} votes</td>
+                            <td>{{ calculateCost(v) }} credits</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <!-- <pre>{{
                     visualCredits
@@ -377,36 +394,51 @@ const updateCredits = async () => {
 
 
                         <div class="motion-header">
-                            <span>Question {{ index + 1 }} of {{ Vote.motions.length }}</span>
+                            <small>Issue #{{ index + 1 }}</small>
+                            <h2>{{ motion.content }}</h2>
 
-                            <strong>{{ motion.content }}</strong>
+
+                            <span>{{ motion.votes }} votes | Credits spend: {{ calculateCost(motion.votes) }}</span>
                         </div>
 
 
                         <div class="motion-body">
-                            <VoteVisualizer :code="`f-${motion.uuid}`" :credits="Election.credits"></VoteVisualizer>
 
-
-                            <div class="motion-vote-container">
-
-
-                                <div class="favor button-container">
-                                    <button @click="castVote(motion, true)">In favor</button>
-                                    <span>{{ motion.votes }} votes</span>
-                                    <span>Cost: {{ calculateCost(motion.votes) }}</span>
-                                </div>
-
-                                <div class="opposed button-container">
-                                    <button @click="castVote(motion, false)">Opposed</button>
-                                    <span>{{ motion.votes }} votes</span>
-                                    <span>Cost: {{ calculateCost(motion.votes) }}</span>
-                                </div>
-
+                            <div class="motion-body-container question-number">
+                                <strong>#{{ index + 1 }}</strong>
                             </div>
 
 
-                            <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits">
-                            </VoteVisualizer>
+                            <div class="motion-body-container">
+                                <VoteVisualizer :code="`f-${motion.uuid}`" :credits="Election.credits"></VoteVisualizer>
+
+                                <div class="favor button-container">
+                                    <strong>In favor</strong>
+                                    <button @click="castVote(motion, true)">
+                                        {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'More') : 'Fewer' }}
+                                    </button>
+
+                                </div>
+                            </div>
+
+
+                            <div class="motion-body-container">
+                                <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits">
+                                </VoteVisualizer>
+
+
+                                <div class="opposed button-container">
+                                    <strong>Opposed</strong>
+                                    <button @click="castVote(motion, false)">
+                                        {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'Fewer') : 'More' }}
+                                    </button>
+                                </div>
+                            </div>
+
+
+
+
+
                         </div>
 
                         <!--
@@ -422,19 +454,33 @@ const updateCredits = async () => {
                     <h1>My votes</h1>
 
                     <div class="motions-results">
+
+                        <div class="motion-result">
+                            <span>In favor</span>
+                            <span>Issue</span>
+                            <span>Opposed</span>
+                        </div>
+
                         <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
-                            {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
+
+
+                            <span>{{ motion.votes > 0 ? "+" + motion.votes : "-" }} </span>
+                            <span>#{{ index + 1 }}</span>
+                            <span>{{ motion.votes < 0 ? motion.votes : "-" }}</span>
+
+
+
                         </div>
                     </div>
 
 
-                <form @submit.prevent="submitForm">
-                    <!-- <pre>
+                    <form @submit.prevent="submitForm">
+                        <!-- <pre>
 {{ form.errors }}
 </pre> -->
 
-                    <button type="submit">Submit</button>
-                </form>
+                        <button type="submit">Submit</button>
+                    </form>
 
 
 
