@@ -83,11 +83,14 @@ h1 {
     gap: 2rem;
 
     margin-top: 2rem;
+    align-items: start;
 
     .sidebar {
         border-top: 1px solid rgb(201, 201, 201);
-        // position: sticky;
-        top: 0;
+        position: sticky;
+        top: 1rem;
+
+        padding-top: 1rem;
     }
 
 
@@ -228,7 +231,11 @@ h1 {
         &.movable {
             top: 0;
             left: 0;
-            position: absolute;
+            position: fixed;
+
+            width: 14px;
+        height: 14px;
+
             z-index: 1;
         }
 
@@ -250,8 +257,51 @@ h1 {
 
 
 
+.movable-credits {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
 
 
 
 
+
+    .credit {
+        position: relative;
+
+
+        &[data-targetcode^="d-o-"] {
+            color: red;
+        }
+
+        &[data-targetcode^="d-f-"] {
+            color: green;
+        }
+
+        // transition: all .5s ease-in-out;
+
+        width: 14px;
+        height: 14px;
+
+        &.movable {
+            top: 0;
+            left: 0;
+            position: fixed;
+
+            width: 14px;
+         height: 14px;
+
+            z-index: 1;
+        }
+
+    }
+
+
+}
+
+
+.in-transition {
+    transition: all .5s ease-in-out;
+}
 

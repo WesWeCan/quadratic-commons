@@ -8,6 +8,7 @@ import { Link, Head, useForm, usePage } from '@inertiajs/vue3';
 import * as VotingTypes from '@/types/voting-types';
 import AllCredits from '@/Components/Visualizer/AllCredits.vue';
 import VoteVisualizer from '@/Components/Visualizer/VoteVisualizer.vue';
+import MovingCredits from '@/Components/Visualizer/MovingCredits.vue';
 
 
 
@@ -101,6 +102,7 @@ onMounted(() => {
 
     requestAnimationFrame(updateCredits);
 
+
 });
 
 
@@ -138,30 +140,21 @@ const initCredits = () => {
 
 
 const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
-    // console.log('visualizeVote');
-
     let remainingCredits = Vote.value.remainingCredits;
 
     let votesCast = motion.votes;
     let cost = calculateCost(motion.votes);
 
-
     if (!motion.visualCredits) {
         motion.visualCredits = [];
     }
 
-
     let creditsToVisualize = cost;
     let creditsAlreadyVisualized = motion.visualCredits.length;
-
-
-    // console.log("creditsToVisualize", creditsToVisualize);
-    // console.log("creditsAlreadyVisualized", creditsAlreadyVisualized);
 
     if (creditsToVisualize > creditsAlreadyVisualized) {
         // there are more credits to visualize than already visualized
         // get them from the visualCredits array
-
 
         let difference = creditsToVisualize - creditsAlreadyVisualized;
 
@@ -173,34 +166,28 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
             }
         }
 
-        // All Arrays are prepared
-        // now we can move the credits
-        // get all credits that are not in the right place
-        for (let i = 0; i < motion.visualCredits.length; i++) {
+        // Cache the length of the visualCredits array
+        const visualCreditsLength = motion.visualCredits.length;
 
-            const credit = motion.visualCredits[i];
+        // Use a for...of loop to iterate over the visualCredits array
+        let visualIndex = 1;
+        for (const credit of motion.visualCredits) {
             const creditCode = credit.creditCode;
 
             const isFavor = votesCast > 0 ? "f" : "o";
 
-            // const visualIndex = i + 1;
-            const visualIndex = calcVisualIndex(i, motion.votes);
-            // const visualIndex = lookupIndex(i);
-
             const targetCode = `d-${isFavor}-${motion.uuid}-${visualIndex}`;
-
 
             if (targetCode !== creditCode) {
                 moveCredit(creditCode, targetCode);
             }
 
+            visualIndex++;
         }
-
     }
     else if (creditsToVisualize < creditsAlreadyVisualized) {
         // there are more credits to visualize than already visualized
         // get them from the visualCredits array
-
 
         let difference = creditsAlreadyVisualized - creditsToVisualize;
 
@@ -210,23 +197,17 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
             if (credit) {
                 visualCredits.value.push(credit);
             }
-
         }
 
+        // Cache the length of the visualCredits array
+        const visualCreditsLength = visualCredits.value.length;
 
-
-
-        // All Arrays are prepared
-        // now we can move the credits
-        // get all credits that are not in the right place
-        for (let i = 0; i < visualCredits.value.length; i++) {
-
-            const credit = visualCredits.value[i];
+        // Use a for...of loop to iterate over the visualCredits array
+        let visualIndex = 1;
+        for (const credit of visualCredits.value) {
             const creditCode = credit.creditCode;
 
             const isFavor = votesCast > 0 ? "f" : "o";
-
-            const visualIndex = i + 1;
 
             const targetCode = `bg-${visualIndex}`;
 
@@ -234,15 +215,9 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
                 moveCredit(creditCode, targetCode);
             }
 
+            visualIndex++;
         }
-
-
-
-
-
-
     }
-
 };
 
 
@@ -258,41 +233,6 @@ function calcVisualIndex(targetIndex: number, votes: number) {
     // targetIndex = targetIndex + 1;
 
     return targetIndex + 1;
-
-    let maxCredits = Election.value.credits;
-    let maxColumns = Math.sqrt(maxCredits);
-
-
-    console.log(targetIndex, maxColumns, votes);
-
-    let columns = votes;
-    let rows = votes;
-
-
-    let cellNumber = 0;
-
-
- let arr = [];
-  let count = 1;
-  for (let i = 0; i < rows; i++) {
-    let row = [];
-
-    let addition = i * 10;
-
-    for (let j = 0; j < columns; j++) {
-      row.push((j+1) + addition);
-    }
-
-    arr.push(row);
-  }
-
-
-  arr = arr.flat();
-
-  return arr[targetIndex];
-
-
-
 }
 
 
@@ -320,8 +260,14 @@ const moveCredit = (selectedCredit: string, toCode: string) => {
     // change the targetCode to d-5
     creditToMove.setAttribute('data-targetCode', `${toCode}`);
 
+    creditToMove.classList.add('in-transition');
 
-    requestAnimationFrame(updateCredits);
+    setTimeout(() => {
+        creditToMove.classList.remove('in-transition');
+    }, 600);
+
+
+    // requestAnimationFrame(updateCredits);
 
 }
 
@@ -329,11 +275,7 @@ const moveCredit = (selectedCredit: string, toCode: string) => {
 
 const updateCredits = async () => {
 
-    console.log('updateCredits');
-
-    // get the current scroll position
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    // console.log('updateCredits');
 
     // get all movable credits
     const movableCredits = document.querySelectorAll('.movable');
@@ -355,24 +297,29 @@ const updateCredits = async () => {
             return;
         }
 
-        // calculate the target position relative to the document
+        // calculate the target position relative to the component
         const targetRect = targetPosition.getBoundingClientRect();
-        let targetTop = targetRect.top + scrollTop;
-        let targetLeft = targetRect.left + scrollLeft;
-
+        let targetTop = targetRect.top;
+        let targetLeft = targetRect.left;
 
         if (targetCode && targetCode.startsWith('d')) {
             targetTop += 3;
             targetLeft += 3;
         }
 
-        // animate the credit to the target position
+
+
+
+        // set the position of the credit
+        (credit as HTMLElement).style.position = 'absolute';
         (credit as HTMLElement).style.top = `${targetTop}px`;
         (credit as HTMLElement).style.left = `${targetLeft}px`;
 
+
+
     });
 
-    // requestAnimationFrame(updateCredits);
+    requestAnimationFrame(updateCredits);
 
 }
 
@@ -385,8 +332,11 @@ const updateCredits = async () => {
 
     <FrontLayout>
 
+        <MovingCredits :credits="Election.credits"></MovingCredits>
+
 
         <h1>{{ Election.name }}</h1>
+        <span>Link to this election: <a :href="route('election.vote', { uuid: Election.uuid })">{{route('election.vote', { uuid: Election.uuid })}}</a></span>
 
         <label>My Name:</label>
         <input type="text" v-model="Vote.name" />
@@ -455,7 +405,8 @@ const updateCredits = async () => {
                             </div>
 
 
-                            <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits"></VoteVisualizer>
+                            <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits">
+                            </VoteVisualizer>
                         </div>
 
                         <!--
@@ -464,25 +415,26 @@ const updateCredits = async () => {
                     </div>
                 </div>
 
+            </main>
+
+            <div class="right-sidebar sidebar">
+                <div class="results">
+                    <h1>My votes</h1>
+
+                    <div class="motions-results">
+                        <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
+                            {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
+                        </div>
+                    </div>
+
+
                 <form @submit.prevent="submitForm">
                     <!-- <pre>
 {{ form.errors }}
 </pre> -->
 
-                    <button type="submit">Vote</button>
+                    <button type="submit">Submit</button>
                 </form>
-            </main>
-
-            <div class="right-sidebar sidebar">
-                <div class="results">
-                    <h1>My Vote</h1>
-
-                    <div class="motions-results">
-
-                        <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
-                            {{ motion.content }} | {{ motion.votes }} votes {{ calculateCost(motion.votes) }} credits
-                        </div>
-                    </div>
 
 
 
