@@ -71,10 +71,25 @@ class ElectionController extends Controller
             'options' => [],
         ]);
 
-        return redirect()->route('election.vote', ['uuid' => $election->uuid]);
+        return redirect()->route('election.created', ['uuid' => $election->uuid]);
 
 
     }
+
+
+    public function created($uuid)
+    {
+
+        $election = Election::where('uuid', $uuid)->firstOrFail();
+
+        return Inertia::render('ElectionCreated', [
+            'election' => $election,
+        ]);
+
+
+    }
+
+
 
     /**
      * Display the specified resource.

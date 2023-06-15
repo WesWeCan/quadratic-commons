@@ -131,73 +131,32 @@ const moveIssue = (index: number, up : boolean) => {
 
 
 <template>
-    <Head title="Create Voting Round" />
+    <Head title="Created!" />
 
     <FrontLayout>
 
-        <!-- <pre>
-            {{ form.errors }}
-        </pre>
-
-        <pre>
-            {{ form }}
-        </pre> -->
-
-
-        <h2>Create voting round</h2>
-
-        <form @submit.prevent="submit">
-
-            <label for="name">Name</label>
-            <input type="text" id="name" v-model="form.name" />
-            <div class="error" v-if="form.errors.name">{{ form.errors.name }}</div>
-
-            <label for="description">Description</label>
-            <textarea id="description" v-model="form.description"></textarea>
-            <div class="error" v-if="form.errors.description">{{ form.errors.description }}</div>
-
-
-
-            <label for="motions">Issues</label>
-            <div class="error" v-if="form.errors.motions">{{ form.errors.motions }}</div>
-            <div class="motions-form">
-
-                <div class="motion" v-for="(motion, index) in form.motions" :key="index">
-                    <label></label>
-                    <input type="text" v-model="form.motions[index].content" />
-
-                    <button
-                        @click.prevent="moveIssue(index, true)" :disabled="index === 0">Up</button>
-                    <button
-                        @click.prevent="moveIssue(index, false)" :disabled="index === form.motions.length - 1">Down</button>
-                    <button @click.prevent="removeIssue(index)" :disabled="index < 1">Remove</button>
-
-                </div>
-
-                <button @click.prevent="addIssue()" :disabled="form.motions.length >= maxIssues">Add Issue</button>
-            </div>
 
 
 
 
-            <label for="credits">Spendable credits {{ credits }}</label>
-            <VoteVisualizer :credits="credits" :opposed="false" />
-
-
-            <!-- <input type="number" id="credits" v-model="form.credits" disabled/>
-            <button @click.prevent="changeCredits(true)"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" size="14"></svg-icon> </button>
-            <button @click.prevent="changeCredits(false)"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" size="14"></svg-icon></button>
-            <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div> -->
-
-
-            <button type="submit">Create voting round</button>
+        <h1>"{{ $page.props.election.name }}" has been cnreated</h1>
 
 
 
-        </form>
+        <div>
+        <p>Share this link with your commons:</p>
+        <a :href="route('election.vote', $page.props.election.uuid)">{{ route('election.vote', $page.props.election.uuid) }}</a>
+        <br/>
+        <Link :href="route('election.vote', $page.props.election.uuid)" as="button">Go to {{ $page.props.election.name }}</Link>
+        </div>
+<br/><br/>
 
-
-
+        <div>
+        <p>Share this link to view the results:</p>
+        <a :href="route('election.results', $page.props.election.uuid)">{{ route('election.results', $page.props.election.uuid) }}</a>
+        <br/>
+        <Link :href="route('election.results', $page.props.election.uuid)" as="button">See results</Link>
+        </div>
 
     </FrontLayout>
 </template>

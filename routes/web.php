@@ -32,6 +32,7 @@ Route::get('/', function () {
 
 
 Route::get('/create', [ElectionController::class, 'create'])->name('election.create');
+Route::get('/created/{uuid}', [ElectionController::class, 'created'])->name('election.created');
 
 Route::post('/store', [ElectionController::class, 'store'])->name('election.store');
 
