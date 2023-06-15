@@ -97,7 +97,7 @@ const addIssue = () => {
 
     form.motions.push({
         content: `Issue ${form.motions.length + 1}`,
-        votes: 2, // Set initial votes to 2
+        votes: 0,
         uuid: createUUID(),
         credits: 0,
     });
