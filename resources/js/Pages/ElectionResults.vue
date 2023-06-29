@@ -19,30 +19,37 @@ const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.El
 const myUuid = ref<string>();
 const myVoteCode = ref<string>();
 
-const calculateCost = (votes: number) => {
+const goToResult = () => {
 
-    let numberOfVotes = votes;
+    if (!myVoteCode.value) {
+        return;
+    }
 
-    let cost = Math.pow(numberOfVotes, 2);
-    console.log(numberOfVotes, cost);
+    let toRoute = route('election.results.code', { uuid: page.props.election.uuid, votecode: myVoteCode.value });
 
-    return cost;
+
+    router.visit(toRoute);
+};
+
+const copyCode = () => {
+
+    if (!page.props.myVoteCode) {
+        return;
+    }
+
+
+    navigator.clipboard.writeText(page.props.myVoteCode);
+
+    alert('copied');
 };
 
 
 
-
-
-onMounted(() => {
-
-});
-
-
-const nettoVotes = (votes: any[]) => {
+const nettoVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
 
-    console.log(votes);
+    // console.log(votes);
 
     votes.forEach((vote) => {
         voteResult += vote.votes;
@@ -51,7 +58,37 @@ const nettoVotes = (votes: any[]) => {
     return voteResult;
 };
 
-const inFavorVotes = (votes: any[]) => {
+
+const brutoVotes = (votes: VotingTypes.VoteResult[]) => {
+
+    let voteResult = 0;
+
+    votes.forEach((vote) => {
+        voteResult += Math.abs(vote.votes);
+    });
+
+    return voteResult;
+};
+
+
+const numVoters = (votes: VotingTypes.VoteResult[], motion: VotingTypes.Motion) => {
+
+
+    let voteResult = 0;
+
+    votes.forEach((vote) => {
+        if (vote.votes !== 0) {
+            voteResult++;
+        }
+    });
+
+    return voteResult;
+
+
+}
+
+
+const inFavorVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
 
@@ -64,7 +101,7 @@ const inFavorVotes = (votes: any[]) => {
     return voteResult;
 };
 
-const opposedVotes = (votes: any[]) => {
+const opposedVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
 
@@ -78,73 +115,59 @@ const opposedVotes = (votes: any[]) => {
 };
 
 
+const calcCumulativeCredits = (votes: VotingTypes.VoteResult[], inFavor: boolean) => {
+
+    let credits = 0;
+
+    if (inFavor) {
+        votes.forEach((vote) => {
+            if (vote.votes > 0) {
+                credits += calcCredits(vote.votes);
+            }
+        });
+    } else {
+        votes.forEach((vote) => {
+            if (vote.votes < 0) {
+                credits += Math.abs(calcCredits(vote.votes));
+            }
+        });
+    }
+
+    return credits;
+}
+
+
 const motionVoted = (elctionMotion: VotingTypes.Motion) => {
 
 
     if (!Election.value.votes) {
-        return false;
+        return [];
     }
 
-    // get all the vote objects that voted for this motion
-    // get the specific motion from the vote object
-    // the vote object should only contain:
-    // - the motion uuid as motion_uuid
-    // - the vote uuid as vote_uuid
-    // - the number of votes as votes
-    // - the name of the voter as voted_by
-
-
-    let votes = [];
+    let votes: VotingTypes.VoteResult[] = [];
     Election.value.votes.forEach((vote) => {
         vote.motions.forEach((voteMotion) => {
             if (voteMotion.uuid === elctionMotion.uuid) {
-                let voteObj = {
-                    vote_uuid: vote.uuid,
+
+
+
+                let voteObj: VotingTypes.VoteResult = {
+                    vote_uuid: vote.uuid || '',
                     votes: voteMotion.votes,
                     voted_by: vote.name,
+                    credits: calcCredits(voteMotion.votes)
                 };
 
-
                 votes.push(voteObj);
-
 
             }
         });
 
-
-
-
     });
-
-
-
-
-
 
     return votes;
 };
 
-
-const nettoCredits = (elctionMotion: VotingTypes.Motion) => {
-
-    let credits = 0;
-
-    if (!Election.value.votes) {
-        return credits;
-    }
-
-    Election.value.votes.forEach((vote) => {
-
-        vote.motions.forEach((voteMotion) => {
-            if (voteMotion.uuid === elctionMotion.uuid) {
-                credits += voteMotion.credits;
-            }
-        });
-
-    });
-
-    return credits;
-};
 
 
 const calcCredits = (votes: number) => {
@@ -152,37 +175,46 @@ const calcCredits = (votes: number) => {
 }
 
 
-const UuidVote = (motionUuid: string) => {
 
-    const myUuid = page.props.myVoteUuid;
+const ElectionResultsData = () => {
 
     let results = {
-        motions: [] as any[]
+        motions: [] as VotingTypes.MotionResult[]
     };
 
     Election.value.motions.forEach((motion) => {
 
-        let motionResult = {
+        const votes = motionVoted(motion);
+        //     ^?
+
+        let motionResult: VotingTypes.MotionResult = {
             motion_content: (motion as VotingTypes.Motion).content,
             motion_uuid: (motion as VotingTypes.Motion).uuid,
-            votes: motionVoted(motion),
+            votes: votes,
+            numVoters: numVoters(votes, motion),
+            nettoVotes: nettoVotes(votes),
+            brutoVotes: brutoVotes(votes),
+            inFavorVotes: inFavorVotes(votes),
+            opposedVotes: opposedVotes(votes),
+            inFavorCredits: calcCumulativeCredits(votes, true),
+            opposedCredits: calcCumulativeCredits(votes, false),
+            totalCreditsSpend: calcCumulativeCredits(votes, true) + calcCumulativeCredits(votes, false)
         };
-
-        motionResult.nettoVotes = nettoVotes(motionResult.votes);
-        motionResult.inFavorVotes = inFavorVotes(motionResult.votes);
-        motionResult.opposedVotes = opposedVotes(motionResult.votes);
-
-
-        motionResult.inFavorCredits = calcCredits(motionResult.inFavorVotes);
-        motionResult.opposedCredits = calcCredits(motionResult.opposedVotes);
-        motionResult.totalCreditsSpend = motionResult.inFavorCredits + motionResult.opposedCredits;
-
 
         results.motions.push(motionResult);
 
     });
 
+    return results;
 
+};
+
+
+const UuidVote = (motionUuid: string) => {
+
+    const myUuid = page.props.myVoteUuid;
+
+    let results = ElectionResultsData();
 
     // find the motion that matches the motionUuid and get the vote from votes array of myUuid
     let motion = results.motions.find((motion) => {
@@ -190,7 +222,7 @@ const UuidVote = (motionUuid: string) => {
     });
 
     if (!motion) {
-        return 0;
+        return null;
     }
 
     let vote = motion.votes.find((vote) => {
@@ -199,80 +231,28 @@ const UuidVote = (motionUuid: string) => {
 
 
     if (!vote) {
-        return 0;
+        return null;
     }
 
 
     return vote;
 
-
-
-
 };
 
 
-const ElectionResults = computed(() => {
+const sortedResults = computed(() => {
 
+    let results = ElectionResultsData();
 
-
-    let results = {
-        motions: [] as any[]
-    };
-
-    Election.value.motions.forEach((motion) => {
-
-        let motionResult = {
-            motion_content: (motion as VotingTypes.Motion).content,
-            motion_uuid: (motion as VotingTypes.Motion).uuid,
-            votes: motionVoted(motion),
-        };
-
-        motionResult.nettoVotes = nettoVotes(motionResult.votes);
-        motionResult.inFavorVotes = inFavorVotes(motionResult.votes);
-        motionResult.opposedVotes = opposedVotes(motionResult.votes);
-
-
-        motionResult.inFavorCredits = calcCredits(motionResult.inFavorVotes);
-        motionResult.opposedCredits = calcCredits(motionResult.opposedVotes);
-        motionResult.totalCreditsSpend = motionResult.inFavorCredits + motionResult.opposedCredits;
-
-
-        results.motions.push(motionResult);
-
-    });
-
-
-
-    let sortedResults = results.motions.sort((a, b) => {
+    results.motions.sort((a, b) => {
         return b.nettoVotes - a.nettoVotes;
     });
 
-
-
-    return sortedResults;
-
-
+    return results.motions;
 
 });
 
 
-const goToResult = () => {
-
-    if (!myVoteCode.value) {
-        return;
-    }
-
-    let toRoute = route('election.results.code', { uuid: page.props.election.uuid, votecode: myVoteCode.value }); // 'https://ziggy.test/posts/1'
-
-
-    router.visit(toRoute);
-};
-
-const copyCode = () => {
-    navigator.clipboard.writeText(page.props.myVoteCode);
-
-    alert('copied');
-};
 
 </script>
 
@@ -303,11 +283,11 @@ const copyCode = () => {
 
             <div v-if="$page.props.myVoteCode">
 
-            <form>
-                <label>My vote code</label>
-                <input type="text" :disabled="true" :value="$page.props.myVoteCode" />
-                <button @click.prevent="() => copyCode()">Copy</button>
-            </form>
+                <form>
+                    <label>My vote code</label>
+                    <input type="text" :disabled="true" :value="$page.props.myVoteCode" />
+                    <button @click.prevent="() => copyCode()">Copy</button>
+                </form>
 
             </div>
 
@@ -328,7 +308,7 @@ const copyCode = () => {
 
 
                     <div class="global">
-                        <h1>Community voted</h1>
+                        <h1>Community (n = {{ $page.props.election.votes.length  }}) voted</h1>
 
 
 
@@ -337,67 +317,38 @@ const copyCode = () => {
 
                     <div class="personal" v-if="$page.props.myVoteUuid">
 
-                        <h1>I Voted</h1>
+                        <h1>My Votes</h1>
 
 
                     </div>
 
-
-
                 </div>
 
-                <div class="results__result" v-for="motion in ElectionResults" :key="motion.motion_uuid">
+                <div class="results__result" v-for="motion in sortedResults" :key="motion.motion_uuid">
 
-
+                    <!-- {{ motion }} -->
                     <div class="global">
+                        <span>Bruto votes: {{ motion.brutoVotes }}</span>
+                        <span>Total voters: {{ motion.numVoters }}</span>
                         <h2>{{ motion.motion_content }}</h2>
-                        <h3>{{ motion.nettoVotes }} Votes | <em>{{ motion.totalCreditsSpend }} Credits</em></h3>
+                        <h3>{{ motion.nettoVotes }} Votes | <em>{{ motion.totalCreditsSpend }} Total credits spend</em></h3>
 
-                        <span>in favor: {{ motion.inFavorVotes }} | <em>{{ motion.inFavorCredits }} Credits</em></span>
-                        <span>opposed: {{ motion.opposedVotes }} | <em>{{ motion.opposedCredits }} Credits</em></span>
+
+
+                        <span>in favor: {{ motion.inFavorVotes }} | <em>{{ motion.inFavorCredits }} Credits
+                                spend</em></span>
+                        <span>opposed: {{ motion.opposedVotes }} | <em>{{ motion.opposedCredits }} Credits spend</em></span>
                     </div>
 
                     <div class="personal" v-if="$page.props.myVoteUuid">
-
                         <h2>{{ motion.motion_content }}</h2>
-                        <h3>{{ UuidVote(motion.motion_uuid).votes }} Votes | <em>{{ motion.totalCreditsSpend }} Credits</em>
+                        <h3>{{ UuidVote(motion.motion_uuid)?.votes }} Votes | <em>{{ UuidVote(motion.motion_uuid)?.credits
+                        }} Credits spend</em>
                         </h3>
-
-
                     </div>
-
-
-
                 </div>
-
-
-
             </div>
-
-
-
         </div>
-
-
-
-
-
-<!--
-        <pre>
-        {{ $page.props.myVoteUuid }}
-        </pre>
-
-
-
-        <pre>
-        {{ ElectionResults }}
-        </pre>
-
-
-        <pre>
-        {{ $page.props.election }}
-        </pre> -->
-
 
 
 

@@ -139,7 +139,7 @@ const moveIssue = (index: number, up : boolean) => {
 
 
 
-        <h1>"{{ $page.props.election.name }}" has been cnreated</h1>
+        <h1>"{{ $page.props.election.name }}" has been created</h1>
 
 
 

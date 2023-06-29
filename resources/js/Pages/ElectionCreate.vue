@@ -197,8 +197,8 @@ const moveIssue = (index: number, up : boolean) => {
 
             <div class="credits-form">
             <input type="number" id="credits" v-model="form.credits" disabled/>
-            <button @click.prevent="changeCredits(true)" :disabled="tempCredits >= maxTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" size="14"></svg-icon> Add credits</button>
-            <button @click.prevent="changeCredits(false)" :disabled="tempCredits <= minTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" size="14"></svg-icon> Remove credits</button>
+            <button @click.prevent="changeCredits(true)" :disabled="tempCredits >= maxTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" :size="14"></svg-icon> Add credits</button>
+            <button @click.prevent="changeCredits(false)" :disabled="tempCredits <= minTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" :size="14"></svg-icon> Remove credits</button>
             <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div>
 
             <div class="credits-form-visualizer">

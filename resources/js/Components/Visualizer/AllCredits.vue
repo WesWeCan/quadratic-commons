@@ -40,12 +40,7 @@ onMounted(() => {
 
 
 
-
-
-
-
 </script>
-
 
 
 <template>
@@ -53,7 +48,7 @@ onMounted(() => {
         <div class="all-credits">
             <div class="credit background" v-for="n in props.credits" :key="n" :title="n.toString()"
                 :data-creditCode="`bg-${n}`">
-                <svg-icon class="circle credit-bg" type="mdi" :path="mdiCircle" size="14"></svg-icon>
+                <svg-icon class="circle credit-bg" type="mdi" :path="mdiCircle" :size="14"></svg-icon>
             </div>
 
             <!-- <div class="credit movable" v-for="n in props.credits" :key="n" :title="n.toString()"

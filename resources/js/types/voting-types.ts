@@ -6,6 +6,23 @@ export interface Motion {
     visualCredits?: Credit[];
 };
 
+export interface MotionResult {
+
+    motion_content: string;
+    motion_uuid: string;
+    votes: VoteResult[];
+
+    numVoters: number;
+
+    nettoVotes: number;
+    brutoVotes: number;
+
+    inFavorVotes: number;
+    opposedVotes: number;
+    inFavorCredits: number;
+    opposedCredits: number;
+    totalCreditsSpend: number;
+}
 
 export interface ElectionOptions {
 
@@ -37,6 +54,7 @@ export interface Election {
 
 export interface Vote {
     id?: number;
+    uuid?: string;
     election_uuid: string;
 
     name: string;
@@ -48,7 +66,12 @@ export interface Vote {
     updated_at?: string;
 }
 
-
+export interface VoteResult {
+    vote_uuid: string;
+    votes: number;
+    voted_by: string;
+    credits: number;
+}
 
 
 export interface Credit {
