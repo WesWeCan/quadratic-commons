@@ -10,6 +10,7 @@ import AllCredits from '@/Components/Visualizer/AllCredits.vue';
 import VoteVisualizer from '@/Components/Visualizer/VoteVisualizer.vue';
 import MovingCredits from '@/Components/Visualizer/MovingCredits.vue';
 import Tutorial from '@/Components/Tutorial.vue';
+import { computed } from 'vue';
 
 
 
@@ -358,6 +359,17 @@ const updateCredits = async () => {
 }
 
 
+
+const votesCast = computed(() => {
+    let votesCast = 0;
+
+    Vote.value.motions.forEach((motion) => {
+        votesCast += Math.abs(motion.votes);
+    });
+
+    return votesCast;
+});
+
 </script>
 
 
@@ -508,6 +520,7 @@ const updateCredits = async () => {
             <div class="right-sidebar sidebar">
                 <div class="results">
                     <h1>My votes</h1>
+<span>Votes cast: <u :hint="`The more you spread your votes across different issues, the more voting power you exercise. So, don't be afraid to spread your votes around!`">{{ votesCast }}</u></span>
 
                     <div class="motions-results">
 

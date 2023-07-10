@@ -23,6 +23,7 @@
     "dependencies": {
         "@jamescoyle/vue-icon": "^0.1.2",
         "@mdi/js": "^7.2.96",
+        "floating-vue": "^2.0.0-beta.24",
         "sass": "^1.63.2"
     }
 }

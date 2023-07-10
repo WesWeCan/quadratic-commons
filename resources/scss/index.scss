@@ -114,8 +114,14 @@ table {
 
 .election {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: .5fr 2fr .5fr;
     gap: 2rem;
+
+    // @media screen and (max-width: 1200px) {
+    //     grid-template-columns: .5fr 2fr;
+    // }
+
+
 
     margin-top: 2rem;
     align-items: start;
@@ -167,8 +173,14 @@ table {
                         gap: 1rem;
                     }
 
-                    &.opposed {
+
+                    &.favor {
                         justify-self: flex-end;
+                    }
+
+
+                    &.opposed {
+                        justify-self: flex-start;
                     }
                 }
 
