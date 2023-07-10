@@ -9,6 +9,7 @@ import * as VotingTypes from '@/types/voting-types';
 import AllCredits from '@/Components/Visualizer/AllCredits.vue';
 import VoteVisualizer from '@/Components/Visualizer/VoteVisualizer.vue';
 import MovingCredits from '@/Components/Visualizer/MovingCredits.vue';
+import Tutorial from '@/Components/Tutorial.vue';
 
 
 
@@ -366,6 +367,12 @@ const updateCredits = async () => {
     <FrontLayout>
 
         <MovingCredits :credits="Election.credits"></MovingCredits>
+
+
+
+        <Tutorial :credits="Election.credits"></Tutorial>
+
+
 
 
         <h1>{{ Election.name }}</h1>

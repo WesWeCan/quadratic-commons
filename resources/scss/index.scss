@@ -97,7 +97,8 @@ table {
         text-align: left;
         vertical-align: middle;
         // border: 1px solid #ccc;
-        box-sizing: border-box; /* include padding and border in width calculation */
+        box-sizing: border-box;
+        /* include padding and border in width calculation */
 
         &:first-child {
             border-right: 1px solid black;
@@ -339,8 +340,8 @@ table {
 }
 
 .credits-form-visualizer {
-display: flex;
-justify-content: flex-start;
+    display: flex;
+    justify-content: flex-start;
 }
 
 
@@ -360,7 +361,7 @@ justify-content: flex-start;
 
         &:first-child {
             span:nth-child(2) {
-               border: none;
+                border: none;
             }
 
             span {
@@ -433,11 +434,54 @@ justify-content: flex-start;
 
 
 
-input[type="text"], textarea {
+input[type="text"],
+textarea {
     border-radius: 7px;
 }
 
 input[type='checkbox'] {
     border-radius: 3px;
     margin-right: 0.5rem;
+}
+
+
+
+
+
+.tutorial {
+
+    display: flex;
+    flex-direction: column;
+    gap: 10rem;
+
+    justify-content: center;
+    align-items: center;
+
+
+    border-bottom: 1px solid rgb(201, 201, 201);
+    margin-bottom: 8rem;
+    padding-bottom: 8rem;
+    padding-top: 8rem;
+
+    article {
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+
+
+        // height: 25lvh;
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            max-width: 60ch;
+        }
+
+    }
+
+
 }
