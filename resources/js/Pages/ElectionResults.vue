@@ -7,6 +7,9 @@ import { Link, Head, useForm, usePage, router } from '@inertiajs/vue3';
 
 import * as VotingTypes from '@/types/voting-types';
 
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiThumbDown, mdiThumbUp, mdiThumbsUpDown } from '@mdi/js';
+
 
 const maxCredits = ref<number>(100);
 const credits = ref<number>(100);
@@ -178,9 +181,10 @@ const calcCredits = (votes: number) => {
 
 const ElectionResultsData = () => {
 
-    let results = {
-        motions: [] as VotingTypes.MotionResult[]
-    };
+
+
+    let motions = [] as VotingTypes.MotionResult[]
+
 
     Election.value.motions.forEach((motion) => {
 
@@ -201,9 +205,31 @@ const ElectionResultsData = () => {
             totalCreditsSpend: calcCumulativeCredits(votes, true) + calcCumulativeCredits(votes, false)
         };
 
-        results.motions.push(motionResult);
+        motions.push(motionResult);
 
     });
+
+    if (!Election.value.votes) {
+        return null;
+    }
+
+    let results: VotingTypes.ElectionResult = {
+
+        motions: motions,
+        numVoters: Election.value.votes.length,
+        creditsAvailable: maxCredits.value,
+        creditsSpend: motions.reduce((a, b) => a + b.totalCreditsSpend, 0),
+        inFavorCredits: motions.reduce((a, b) => a + b.inFavorCredits, 0),
+        opposedCredits: motions.reduce((a, b) => a + b.opposedCredits, 0),
+        inFavorVotes: motions.reduce((a, b) => a + b.inFavorVotes, 0),
+        opposedVotes: motions.reduce((a, b) => a + b.opposedVotes, 0),
+        totalCreditsSpend: motions.reduce((a, b) => a + b.totalCreditsSpend, 0),
+
+        nettoWinner: motions.reduce((a, b) => a.nettoVotes > b.nettoVotes ? a : b).motion_uuid,
+        nettoLoser: motions.reduce((a, b) => a.nettoVotes < b.nettoVotes ? a : b).motion_uuid,
+        mostAttention: motions.reduce((a, b) => a.totalCreditsSpend > b.totalCreditsSpend ? a : b).motion_uuid,
+    }
+
 
     return results;
 
@@ -215,6 +241,10 @@ const UuidVote = (motionUuid: string) => {
     const myUuid = page.props.myVoteUuid;
 
     let results = ElectionResultsData();
+
+    if (!results) {
+        return null;
+    }
 
     // find the motion that matches the motionUuid and get the vote from votes array of myUuid
     let motion = results.motions.find((motion) => {
@@ -240,13 +270,35 @@ const UuidVote = (motionUuid: string) => {
 };
 
 
+const sortNetto = ref(true);
+const showStats = ref(false);
+const limitResults = ref(true);
+
 const sortedResults = computed(() => {
 
     let results = ElectionResultsData();
 
-    results.motions.sort((a, b) => {
-        return b.nettoVotes - a.nettoVotes;
-    });
+    if (!results) {
+        return null;
+    }
+
+
+    if (sortNetto.value) {
+        results.motions.sort((a, b) => {
+            return b.nettoVotes - a.nettoVotes;
+        });
+    }
+    else {
+        // based on credits
+        results.motions.sort((a, b) => {
+            return b.totalCreditsSpend - a.totalCreditsSpend;
+        });
+    }
+
+    if(limitResults.value){
+        results.motions = results.motions.slice(0, 3);
+    }
+
 
     return results;
 
@@ -304,15 +356,17 @@ const sortedResults = computed(() => {
             <div class="election-results__body">
 
 
+
+
                 <div class="results__result">
 
 
+
                     <div class="global">
-                        <h1>Community (n = {{ $page.props.election.votes.length  }}) voted</h1>
-
-
-
-
+                        <h1>Community voted: ({{ $page.props.election.votes.length }} voters)</h1>
+                        <button @click="showStats = !showStats">{{ showStats ? "Hide" : "Show" }} statistics</button>
+                        <button @click="sortNetto = !sortNetto">{{ !sortNetto ? "Sort based on votes" : "Sort based on attention" }}</button>
+                        <button @click="limitResults = !limitResults">{{ limitResults ? "Show all issues" : "Limit to 3 issues" }}</button>
                     </div>
 
                     <div class="personal" v-if="$page.props.myVoteUuid">
@@ -324,27 +378,74 @@ const sortedResults = computed(() => {
 
                 </div>
 
-                <div class="results__result" v-for="motion in sortedResults.motions" :key="motion.motion_uuid">
+                <div class="results__result" v-for="motion in sortedResults.motions" :key="motion.motion_uuid"
+                    v-if="sortedResults">
 
                     <!-- {{ motion }} -->
                     <div class="global">
-                        <span>Bruto votes: {{ motion.brutoVotes }}</span>
-                        <span>Total voters: {{ motion.numVoters }}</span>
-                        <h2>{{ motion.motion_content }}</h2>
-                        <h3>{{ motion.nettoVotes }} Votes | <em>{{ motion.totalCreditsSpend }} Total credits spend</em></h3>
+                        <h2>{{ motion.motion_content }} <svg-icon :size="18" type="mdi" :path="mdiThumbUp"
+                                v-if="sortedResults.nettoWinner === motion.motion_uuid"
+                                v-tooltip="`Highest netto votes`"></svg-icon>
+                            <svg-icon :size="18" type="mdi" :path="mdiThumbDown"
+                                v-if="sortedResults.nettoLoser === motion.motion_uuid"
+                                v-tooltip="`Lowest netto votes`"></svg-icon>
+                            <svg-icon :size="18" type="mdi" :path="mdiThumbsUpDown"
+                                v-if="sortedResults.mostAttention === motion.motion_uuid"
+                                v-tooltip="`Most attention based on credits`"></svg-icon>
+                        </h2>
 
 
 
-                        <span>in favor: {{ motion.inFavorVotes }} | <em>{{ motion.inFavorCredits }} Credits
-                                spend</em></span>
-                        <span>opposed: {{ motion.opposedVotes }} | <em>{{ motion.opposedCredits }} Credits spend</em></span>
+                        <div class="vote-data" v-if="showStats">
+
+                            <div>
+                                <span v-tooltip="`Netto votes: in favor minus opposed votes`">{{ motion.nettoVotes }}
+                                    Votes</span>
+                                <em>{{ motion.totalCreditsSpend }} Total credits spend</em>
+                            </div>
+
+                            <div>
+                                Total voters: {{ motion.numVoters }}
+                            </div>
+
+                            <div>
+                                <span v-tooltip="`Total number of votes cast`">Bruto votes: {{ motion.brutoVotes }}</span>
+                            </div>
+
+                            <div>
+                                <span>In favor: {{ motion.inFavorVotes }}
+                                </span>
+                                <em>{{ motion.inFavorCredits }} Credits
+                                    spent</em>
+                            </div>
+
+
+                            <div>
+                                <span>opposed: {{ motion.opposedVotes }}</span>
+                                <em>{{ motion.opposedCredits }} Credits
+                                    spent</em>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div class="personal" v-if="$page.props.myVoteUuid">
                         <h2>{{ motion.motion_content }}</h2>
-                        <h3>{{ UuidVote(motion.motion_uuid)?.votes }} Votes | <em>{{ UuidVote(motion.motion_uuid)?.credits
-                        }} Credits spend</em>
-                        </h3>
+
+
+                        <div class="vote-data" v-if="showStats">
+
+<div>
+    <span v-tooltip="`Netto votes: in favor minus opposed votes`">{{ UuidVote(motion.motion_uuid)?.votes }} Votes</span>
+    <em>{{ UuidVote(motion.motion_uuid)?.credits
+                        }} Credits spent</em>
+</div>
+
+</div>
+
+
                     </div>
                 </div>
             </div>
@@ -355,7 +456,3 @@ const sortedResults = computed(() => {
 
     </FrontLayout>
 </template>
-
-
-
-<style scoped></style>

@@ -54,14 +54,14 @@ export interface Election {
 export interface ElectionResult {
 
     motions: MotionResult[];
-    NumVoters: number;
-    CreditsAvailable: number;
-    CreditsSpend: number;
-    InFavorVotes: number;
-    OpposedVotes: number;
-    InFavorCredits: number;
-    OpposedCredits: number;
-    TotalCreditsSpend: number;
+    numVoters: number;
+    creditsAvailable: number;
+    creditsSpend: number;
+    inFavorVotes: number;
+    opposedVotes: number;
+    inFavorCredits: number;
+    opposedCredits: number;
+    totalCreditsSpend: number;
 
     nettoWinner: string | null;
     nettoLoser: string | null;
