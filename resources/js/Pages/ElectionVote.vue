@@ -131,7 +131,7 @@ const resetCredits = () => {
     Vote.value.motions.forEach((motion) => {
 
         let inFavor = motion.votes > 0;
-        for(let i = Math.abs(motion.votes); i > 0; i--){
+        for (let i = Math.abs(motion.votes); i > 0; i--) {
 
             castVote(motion, !inFavor);
 
@@ -374,7 +374,7 @@ const updateCredits = async () => {
 
 
 
-
+        <section class="election-info">
         <h1>{{ Election.name }}</h1>
         <p>{{ Election.description }}</p>
 
@@ -385,6 +385,8 @@ const updateCredits = async () => {
 
         <label>Name:</label>
         <input type="text" v-model="Vote.name" />
+
+        </section>
 
         <section class="election">
 
@@ -430,47 +432,63 @@ const updateCredits = async () => {
 
 
                         <div class="motion-header">
-                            <small>Issue #{{ index + 1 }}</small>
+
                             <h2>{{ motion.content }}</h2>
 
 
-                            <span>{{ motion.votes }} votes | Credits spend: {{ calculateCost(motion.votes) }}</span>
+                            <span>{{ Math.abs(motion.votes) }} Votes | Credits spent: {{ calculateCost(motion.votes) }}</span>
                         </div>
 
 
                         <div class="motion-body">
 
-                            <div class="motion-body-container question-number">
-                                <strong>#{{ index + 1 }}</strong>
-                            </div>
 
 
-                            <div class="motion-body-container">
+                            <div class="motion-body-container favor">
                                 <VoteVisualizer :code="`f-${motion.uuid}`" :credits="Election.credits"
                                     :force-spread="Election.options.forceSpread"></VoteVisualizer>
+                            </div>
 
-                                <div class="favor button-container">
-                                    <strong>In favor</strong>
-                                    <button @click="castVote(motion, true)">
-                                        {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'More') : 'Fewer' }}
-                                    </button>
+                            <div class="motion-body-container container-center">
+
+
+                                <div class="container-center-body">
+                                    <div class="question-number">
+                                        <strong>Issue #{{ index + 1 }}</strong>
+                                    </div>
+
+                                    <div class="button-containers">
+
+                                        <div class="favor button-container">
+
+                                            <button @click="castVote(motion, true)">
+                                                {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'More') : 'Fewer' }}
+                                            </button>
+                                            <strong>In favor</strong>
+
+                                        </div>
+
+                                        <div class="line"></div>
+
+                                        <div class="opposed button-container">
+
+                                            <button @click="castVote(motion, false)">
+                                                {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'Fewer') : 'More' }}
+                                            </button>
+                                            <strong>Opposed</strong>
+                                        </div>
+
+                                    </div>
+
 
                                 </div>
                             </div>
 
 
-                            <div class="motion-body-container">
+                            <div class="motion-body-container opposed">
                                 <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits"
                                     :force-spread="Election.options.forceSpread">
                                 </VoteVisualizer>
-
-
-                                <div class="opposed button-container">
-                                    <strong>Opposed</strong>
-                                    <button @click="castVote(motion, false)">
-                                        {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'Fewer') : 'More' }}
-                                    </button>
-                                </div>
                             </div>
 
 
