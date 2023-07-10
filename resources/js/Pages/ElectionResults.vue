@@ -248,7 +248,7 @@ const sortedResults = computed(() => {
         return b.nettoVotes - a.nettoVotes;
     });
 
-    return results.motions;
+    return results;
 
 });
 
@@ -324,7 +324,7 @@ const sortedResults = computed(() => {
 
                 </div>
 
-                <div class="results__result" v-for="motion in sortedResults" :key="motion.motion_uuid">
+                <div class="results__result" v-for="motion in sortedResults.motions" :key="motion.motion_uuid">
 
                     <!-- {{ motion }} -->
                     <div class="global">

@@ -26,6 +26,7 @@ export interface MotionResult {
 
 export interface ElectionOptions {
 
+    forceSpread: boolean;
 
 
 }
@@ -46,6 +47,28 @@ export interface Election {
 
     created_at: string;
     updated_at: string;
+
+}
+
+
+export interface ElectionResult {
+
+    motions: MotionResult[];
+    NumVoters: number;
+    CreditsAvailable: number;
+    CreditsSpend: number;
+    InFavorVotes: number;
+    OpposedVotes: number;
+    InFavorCredits: number;
+    OpposedCredits: number;
+    TotalCreditsSpend: number;
+
+    nettoWinner: string | null;
+    nettoLoser: string | null;
+    mostAttention: string | null;
+
+
+
 
 }
 

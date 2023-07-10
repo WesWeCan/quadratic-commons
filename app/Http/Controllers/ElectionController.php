@@ -72,6 +72,8 @@ class ElectionController extends Controller
     {
 
         $validated = $request->validated();
+        // dd($validated);
+
 
         $election = Election::create([
             'name' => $validated['name'],
@@ -79,7 +81,7 @@ class ElectionController extends Controller
             'description' => $validated['description'],
             'credits' => $validated['credits'],
             'motions' => $validated['motions'],
-            'options' => [],
+            'options' => $validated['options'],
         ]);
 
         return redirect()->route('election.created', ['uuid' => $election->uuid]);

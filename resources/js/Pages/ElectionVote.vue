@@ -84,6 +84,20 @@ const calculateCost = (votes: number) => {
 };
 
 
+const calculateVotesInterger = (credits: number) => {
+
+    let numberOfVotes = 0;
+
+    if (Election.value.options.forceSpread) {
+        numberOfVotes = Math.sqrt(credits + 1) - 1;
+    }
+    else {
+        numberOfVotes = Math.sqrt(credits);
+    }
+
+    return numberOfVotes;
+};
+
 
 
 
@@ -99,11 +113,30 @@ onMounted(() => {
 
     initCredits();
 
+    // if(Election.value.options.forceSpread) {
+    //     console.log('forceSpread');
+    //     Vote.value.remainingCredits = Election.value.credits;
+    // }
+
 
     requestAnimationFrame(updateCredits);
 
 
 });
+
+
+
+const resetCredits = () => {
+    Vote.value.motions.forEach((motion) => {
+
+        let inFavor = motion.votes > 0;
+        for(let i = Math.abs(motion.votes); i > 0; i--){
+
+            castVote(motion, !inFavor);
+
+        }
+    });
+}
 
 
 
@@ -365,17 +398,13 @@ const updateCredits = async () => {
                 <table class="cost-calculation">
                     <thead>
                         <tr>
-                            <th colspan="2">Cost Calculation</th>
+                            <th colspan="2">Votes to Credits</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th>Votes</th>
-                            <th>Credits</th>
-                        </tr>
-                        <tr v-for="v in Math.sqrt(Election.credits)" :key="v">
-                            <td>{{ v }} votes</td>
-                            <td>{{ calculateCost(v) }} credits</td>
+                        <tr v-for="v in calculateVotesInterger(Election.credits)" :key="v">
+                            <td>{{ v }} {{ v == 1 ? 'vote:' : 'votes:' }}</td>
+                            <td>{{ calculateCost(v) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -410,7 +439,8 @@ const updateCredits = async () => {
 
 
                             <div class="motion-body-container">
-                                <VoteVisualizer :code="`f-${motion.uuid}`" :credits="Election.credits"></VoteVisualizer>
+                                <VoteVisualizer :code="`f-${motion.uuid}`" :credits="Election.credits"
+                                    :force-spread="Election.options.forceSpread"></VoteVisualizer>
 
                                 <div class="favor button-container">
                                     <strong>In favor</strong>
@@ -423,7 +453,8 @@ const updateCredits = async () => {
 
 
                             <div class="motion-body-container">
-                                <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits">
+                                <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits"
+                                    :force-spread="Election.options.forceSpread">
                                 </VoteVisualizer>
 
 
@@ -464,15 +495,18 @@ const updateCredits = async () => {
                         <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
 
 
-                            <span>{{ motion.votes > 0 ? "+" + motion.votes : "-" }} </span>
+                            <span>{{ motion.votes > 0 ? motion.votes : "-" }} </span>
                             <span>#{{ index + 1 }}</span>
-                            <span>{{ motion.votes < 0 ? motion.votes : "-" }}</span>
+                            <span>{{ motion.votes < 0 ? Math.abs(motion.votes) : "-" }}</span>
 
 
 
                         </div>
                     </div>
 
+
+
+                    <button @click="resetCredits()">Reset</button>
 
                     <form @submit.prevent="submitForm">
                         <!-- <pre>

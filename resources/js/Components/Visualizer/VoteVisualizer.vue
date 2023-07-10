@@ -3,6 +3,7 @@
 
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiCircle } from '@mdi/js';
+import { computed } from 'vue';
 import { onMounted, ref, watch } from 'vue';
 
 
@@ -24,8 +25,30 @@ const props = defineProps({
         required: true,
     },
 
+    forceSpread: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+
 
 })
+
+
+const referenceCredits = computed<number>(() => {
+
+    if(props.forceSpread) {
+
+        let temp = props.credits + 1;
+        let tempSqrt = Math.sqrt(temp) - 1;
+        temp = Math.pow(tempSqrt, 2);
+
+        return temp;
+    }
+
+    return props.credits;
+
+});
 
 const correctArray = ref( [
         [1, 2, 5, 10, 17, 26, 37, 50, 65, 82],
@@ -43,13 +66,15 @@ const correctArray = ref( [
 
 onMounted(() => {
 
-    correctArray.value = generateTable(Math.sqrt(props.credits));
+    correctArray.value = generateTable(Math.sqrt(referenceCredits.value));
 
 });
 
 
 watch(() => props.credits, (newVal, oldVal) => {
-    correctArray.value = generateTable(Math.sqrt(newVal));
+
+    console.log('credits changed', newVal, oldVal, referenceCredits.value);
+    correctArray.value = generateTable(Math.sqrt(referenceCredits.value));
 });
 
 
@@ -111,7 +136,7 @@ const addLayerToTable = (table: any[]) => {
 
 <template>
 
-        <div class="all-credits visualizer" :class="[{'opposed': props.opposed}, `r-${Math.sqrt(props.credits)}`]">
+        <div class="all-credits visualizer" :class="[{'opposed': props.opposed}, `r-${Math.sqrt(referenceCredits)}`]">
             <div class="credit" v-for="n in correctArray.flat()" :key="n" :title="n.toString()">
                 <svg-icon class="circle credit-bg" type="mdi" :path="mdiCircle" :size="14"
                     :data-creditCode="`d-${props.code}-${n}`"></svg-icon>

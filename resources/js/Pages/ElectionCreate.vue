@@ -27,9 +27,9 @@ const minTempCredits = 1;
 onMounted(() => {
     console.log('Index.vue mounted');
 
-   for(let i = 0; i < minIssues; i++) {
-       addIssue();
-   }
+    for (let i = 0; i < minIssues; i++) {
+        addIssue();
+    }
 
 
 });
@@ -46,7 +46,9 @@ const form = useForm({
     description: "Description",
     credits: 100,
     motions: [] as VotingTypes.Motion[],
-    options: {}
+    options: {
+        forceSpread: false,
+    } as VotingTypes.ElectionOptions
 });
 
 
@@ -55,6 +57,13 @@ const submit = () => {
     // form.credits = credits.value;
 
     form.credits = Math.pow(tempCredits.value, 2);
+
+    console.log(form);
+
+    if(form.options.forceSpread) {
+        form.credits -= 1;
+    }
+
 
     form.post(route('election.store'));
 };
@@ -84,11 +93,11 @@ const changeCredits = (increases: boolean) => {
         tempCredits.value--;
     }
 
-    if(tempCredits.value > maxTempCredits) {
+    if (tempCredits.value > maxTempCredits) {
         tempCredits.value = maxTempCredits;
     }
 
-    if(tempCredits.value < minTempCredits) {
+    if (tempCredits.value < minTempCredits) {
         tempCredits.value = minTempCredits;
     }
 
@@ -107,8 +116,12 @@ const addIssue = () => {
         return;
     }
 
+
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+
     form.motions.push({
-        content: `Issue ${form.motions.length + 1}`,
+        content: `Issue ${letters[form.motions.length]}`,
         votes: 0,
         uuid: createUUID(),
         credits: 0,
@@ -126,7 +139,7 @@ const removeIssue = (index: number) => {
     form.motions.splice(index, 1);
 };
 
-const moveIssue = (index: number, up : boolean) => {
+const moveIssue = (index: number, up: boolean) => {
     console.log('moveIssue');
 
     if (up) {
@@ -178,10 +191,9 @@ const moveIssue = (index: number, up : boolean) => {
                     <label></label>
                     <input type="text" v-model="form.motions[index].content" />
 
-                    <button
-                        @click.prevent="moveIssue(index, true)" :disabled="index === 0">Up</button>
-                    <button
-                        @click.prevent="moveIssue(index, false)" :disabled="index === form.motions.length - 1">Down</button>
+                    <button @click.prevent="moveIssue(index, true)" :disabled="index === 0">Up</button>
+                    <button @click.prevent="moveIssue(index, false)"
+                        :disabled="index === form.motions.length - 1">Down</button>
                     <button @click.prevent="removeIssue(index)" :disabled="index < 1">Remove</button>
 
                 </div>
@@ -192,19 +204,26 @@ const moveIssue = (index: number, up : boolean) => {
 
 
 
-            <label for="credits">Spendable credits: {{ form.credits }}</label>
+            <label for="credits">Spendable credits: {{ form.credits }} {{ form.options.forceSpread ? "-1" : "" }}</label>
+
+            <div class="input-group">
+                <input type="checkbox" v-model="form.options.forceSpread">
+                <label>Force voters to spread vote</label>
+            </div>
 
 
             <div class="credits-form">
-            <input type="number" id="credits" v-model="form.credits" disabled/>
-            <button @click.prevent="changeCredits(true)" :disabled="tempCredits >= maxTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiPlus" :size="14"></svg-icon> Add credits</button>
-            <button @click.prevent="changeCredits(false)" :disabled="tempCredits <= minTempCredits"><svg-icon class="circle credit-bg" type="mdi" :path="mdiMinus" :size="14"></svg-icon> Remove credits</button>
-            <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div>
+                <input type="number" id="credits" v-model="form.credits" disabled />
+                <button @click.prevent="changeCredits(true)" :disabled="tempCredits >= maxTempCredits"><svg-icon
+                        class="circle credit-bg" type="mdi" :path="mdiPlus" :size="14"></svg-icon> Add credits</button>
+                <button @click.prevent="changeCredits(false)" :disabled="tempCredits <= minTempCredits"><svg-icon
+                        class="circle credit-bg" type="mdi" :path="mdiMinus" :size="14"></svg-icon> Remove credits</button>
+                <div class="error" v-if="form.errors.credits">{{ form.errors.credits }}</div>
 
-            <div class="credits-form-visualizer">
-            <VoteVisualizer :credits="form.credits" :opposed="true" />
-        </div>
-        </div>
+                <div class="credits-form-visualizer">
+                    <VoteVisualizer :credits="form.options.forceSpread ? form.credits-1 : form.credits" :opposed="true" :force-spread="form.options.forceSpread" />
+                </div>
+            </div>
 
 
 
@@ -223,5 +242,3 @@ const moveIssue = (index: number, up : boolean) => {
 </template>
 
 
-
-<style scoped></style>

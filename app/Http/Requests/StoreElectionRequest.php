@@ -31,8 +31,8 @@ class StoreElectionRequest extends FormRequest
             'motions.*.votes' => ['required', 'numeric'],
             'motions.*.uuid' => ['required', 'string'],
             'motions.*.credits' => ['required', 'numeric'],
-            // 'options' => ['required', 'array'],
-
+            'options' => ['required', 'array'],
+            'options.forceSpread' => ['boolean'],
         ];
     }
 }
