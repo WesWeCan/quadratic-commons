@@ -25,9 +25,6 @@ class ElectionController extends Controller
         return Inertia::render('ElectionVote', [
             'election' => $election,
         ]);
-
-
-
     }
 
     public function results($uuid)
@@ -38,22 +35,31 @@ class ElectionController extends Controller
         return Inertia::render('ElectionResults', [
             'election' => $election,
         ]);
-
     }
 
 
+    /**
+     * Retrieve the election results with the provided code.
+     *
+     * @param string $uuid The UUID of the election.
+     * @param string $votecode The vote code.
+     * @return \Inertia\Response The rendered election results page.
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
     public function resultsWithCode($uuid, $votecode)
     {
+        // Retrieve the election with the given UUID
         $election = Election::where('uuid', $uuid)->with('votes')->firstOrFail();
 
+        // Retrieve the UUID of the vote with the given vote code
         $myVoteUuid = Vote::where('votecode', $votecode)->firstOrFail()->uuid;
 
+        // Render the election results page with the necessary data
         return Inertia::render('ElectionResults', [
             'election' => $election,
-            "myVoteCode" => $votecode,
+            'myVoteCode' => $votecode,
             'myVoteUuid' => $myVoteUuid,
         ]);
-
     }
 
     /**
@@ -67,14 +73,16 @@ class ElectionController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param StoreElectionRequest $request The HTTP request object containing the validated data.
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreElectionRequest $request)
     {
-
+        // Validate the request data
         $validated = $request->validated();
-        // dd($validated);
 
-
+        // Create a new election with the validated data
         $election = Election::create([
             'name' => $validated['name'],
             'uuid' => Str::uuid(),
@@ -84,22 +92,26 @@ class ElectionController extends Controller
             'options' => $validated['options'],
         ]);
 
+        // Redirect to the "election.created" route with the UUID of the created election
         return redirect()->route('election.created', ['uuid' => $election->uuid]);
-
-
     }
 
 
+    /**
+     * Retrieve the election with the given UUID and render the 'ElectionCreated' view.
+     *
+     * @param string $uuid The UUID of the election
+     * @return \Inertia\Response The rendered 'ElectionCreated' view
+     */
     public function created($uuid)
     {
-
+        // Retrieve the election with the given UUID
         $election = Election::where('uuid', $uuid)->firstOrFail();
 
+        // Render the 'ElectionCreated' view with the retrieved election
         return Inertia::render('ElectionCreated', [
             'election' => $election,
         ]);
-
-
     }
 
 

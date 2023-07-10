@@ -29,15 +29,19 @@ class VoteController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param StoreVoteRequest $request The request object.
+     * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
     public function store(StoreVoteRequest $request)
     {
-
+        // Validate the request
         $validated = $request->validated();
-        // dd($validated['motions']);
 
+        // Find the election by UUID
         $election = Election::where('uuid', $validated['election_uuid'])->firstOrFail();
 
+        // Create a new vote with the validated data
         $vote = Vote::create([
             'name' => $validated['name'],
             'uuid' => Str::uuid(),
@@ -47,12 +51,8 @@ class VoteController extends Controller
             'election_id' => $election->id,
         ]);
 
-
-        // dd($vote);
-
+        // Redirect to the election results page with the vote code and election UUID
         return redirect()->route('election.results.code', ['uuid' => $election->uuid, 'votecode' => $vote->votecode]);
-
-
     }
 
     /**

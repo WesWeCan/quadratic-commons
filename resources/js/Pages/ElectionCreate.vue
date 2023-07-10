@@ -34,9 +34,6 @@ onMounted(() => {
 
 });
 
-
-
-
 const credits = computed<number>(() => {
     return Math.pow(form.motions.length, 2);
 });
@@ -52,6 +49,12 @@ const form = useForm({
 });
 
 
+/**
+ * Submits the form and updates the 'form' object with the provided values.
+ *
+ * @param {None} None
+ * @return {None} None
+ */
 const submit = () => {
     console.log('submit');
     // form.credits = credits.value;
@@ -81,6 +84,12 @@ const createUUID = () => {
 };
 
 
+/**
+ * Changes the credits based on the value of the `increases` parameter.
+ *
+ * @param {boolean} increases - Determines whether the credits should be increased or decreased.
+ * @return {void}
+ */
 const changeCredits = (increases: boolean) => {
 
     if (tempCredits.value <= 1 && !increases) {
@@ -108,18 +117,26 @@ const changeCredits = (increases: boolean) => {
 
 
 
+/**
+ * Adds an issue to the form's motions array if the maximum number of issues has not been reached.
+ *
+ * @param {void} - This function does not take any parameters.
+ * @return {void} - This function does not return any value.
+ */
 const addIssue = () => {
+    // Print a message to indicate that the function is being executed
     console.log('addIssue');
 
+    // Check if the maximum number of issues has been reached
     if (form.motions.length >= maxIssues) {
-        // Maximum number of issues reached
+        // If the maximum number of issues has been reached, return and exit the function
         return;
     }
 
-
+    // Define a string of letters to be used for issue naming
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-
+    // Create a new motion object and add it to the motions array
     form.motions.push({
         content: `Issue ${letters[form.motions.length]}`,
         votes: 0,

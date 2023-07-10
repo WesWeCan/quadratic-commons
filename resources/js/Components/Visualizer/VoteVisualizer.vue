@@ -65,20 +65,23 @@ const correctArray = ref( [
 
 
 onMounted(() => {
-
     correctArray.value = generateTable(Math.sqrt(referenceCredits.value));
-
 });
 
 
 watch(() => props.credits, (newVal, oldVal) => {
-
     console.log('credits changed', newVal, oldVal, referenceCredits.value);
     correctArray.value = generateTable(Math.sqrt(referenceCredits.value));
 });
 
 
-function generateTable(votes: number) {
+/**
+ * Generates a table with the specified number of votes.
+ *
+ * @param {number} votes - The number of votes to generate a table for.
+ * @returns {Array} - The generated table.
+ */
+function generateTable(votes : number) {
 
     let table = [];
 
@@ -91,42 +94,57 @@ function generateTable(votes: number) {
 }
 
 
-const addLayerToTable = (table: any[]) => {
+/**
+ * Adds a new layer to the table.
+ *
+ * @param {any[]} table - The table to add a layer to.
+ * @returns {any[]} - The updated table with the new layer.
+ */
+const addLayerToTable = (table: any[]): any[] => {
+    // Get the current number of rows and columns in the table
     const tableCurrentRows = table.length;
     const tableCurrentColumns = tableCurrentRows;
 
+    // Calculate the initial value for the new layer
     let currentValue = tableCurrentColumns * tableCurrentRows;
 
+    // Add an empty array to the table to represent the new layer
     table.push([]);
+
+    // Fill the new layer with zeros
     for (let i = 0; i < tableCurrentColumns + 1; i++) {
         table[tableCurrentRows].push(0);
     }
 
-
+    // Initialize the starting row and column indexes
     let row = 0;
     let col = 0;
 
+    // Increment the current value
     currentValue++;
 
+    // Update the last column of the first row with the current value
     for (let i = 0; i < tableCurrentColumns; i++) {
         col++;
     }
     table[row][col] = currentValue;
 
+    // Fill the first column of each row with the current value
     for (let i = 0; i < tableCurrentRows; i++) {
         table[row][col] = currentValue;
         currentValue++;
         row++;
     }
 
+    // Fill the last row of the table with the current value
     for (let i = 0; i <= tableCurrentColumns; i++) {
         table[row][col] = currentValue;
         currentValue++;
         col--;
     }
 
+    // Return the updated table
     return table;
-
 }
 
 

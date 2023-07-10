@@ -25,8 +25,31 @@ const Vote = ref<VotingTypes.Vote>({
 });
 
 const form = useForm(Vote.value);
+const visualCredits = ref([] as VotingTypes.Credit[]);
 
 
+onMounted(() => {
+    console.log('Index.vue mounted');
+
+    Vote.value = {
+        name: '',
+        remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
+        motions: JSON.parse(JSON.stringify(Election.value.motions)),
+        election_uuid: Election.value.uuid,
+    }
+
+    initCredits();
+
+    // if(Election.value.options.forceSpread) {
+    //     console.log('forceSpread');
+    //     Vote.value.remainingCredits = Election.value.credits;
+    // }
+
+
+    requestAnimationFrame(updateCredits);
+
+
+});
 
 /**
  * Casts a vote for a motion using quadratic voting.
@@ -75,6 +98,12 @@ const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
 }
 
 
+/**
+ * Calculates the cost based on the number of votes.
+ *
+ * @param {number} votes - The number of votes.
+ * @return {number} The calculated cost.
+ */
 const calculateCost = (votes: number) => {
 
     let numberOfVotes = votes;
@@ -86,6 +115,12 @@ const calculateCost = (votes: number) => {
 };
 
 
+/**
+ * Calculates the number of votes based on the given credits.
+ *
+ * @param {number} credits - The number of credits.
+ * @return {number} The calculated number of votes.
+ */
 const calculateVotesInterger = (credits: number) => {
 
     let numberOfVotes = 0;
@@ -103,31 +138,15 @@ const calculateVotesInterger = (credits: number) => {
 
 
 
-onMounted(() => {
-    console.log('Index.vue mounted');
-
-    Vote.value = {
-        name: '',
-        remainingCredits: JSON.parse(JSON.stringify(Election.value.credits)),
-        motions: JSON.parse(JSON.stringify(Election.value.motions)),
-        election_uuid: Election.value.uuid,
-    }
-
-    initCredits();
-
-    // if(Election.value.options.forceSpread) {
-    //     console.log('forceSpread');
-    //     Vote.value.remainingCredits = Election.value.credits;
-    // }
-
-
-    requestAnimationFrame(updateCredits);
-
-
-});
 
 
 
+/**
+ * Resets the credits for all motions in the Vote value.
+ *
+ * @param {type} paramName - description of parameter
+ * @return {type} description of return value
+ */
 const resetCredits = () => {
     Vote.value.motions.forEach((motion) => {
 
@@ -142,6 +161,12 @@ const resetCredits = () => {
 
 
 
+/**
+ * Submits the form by sending a POST request to the server.
+ *
+ * @param {type} form - The form object containing the data to be submitted.
+ * @return {type} The response from the server indicating the success of the submission.
+ */
 const submitForm = () => {
     console.log('submitForm');
 
@@ -155,10 +180,16 @@ const submitForm = () => {
 
 
 
-const visCreditsTotal = ref(Election.value.credits);
 
-const visualCredits = ref([] as VotingTypes.Credit[]);
 
+/**
+ * Initializes the visual credits array with the number of credits available for the election.
+ * Each credit is represented by an object with a unique creditCode and targetCode.
+ * The creditCode is used to identify the credit in the visual representation.
+ * The targetCode is used to identify the target element in the DOM where the credit will be displayed.
+ *
+ * @return {void}
+ */
 const initCredits = () => {
 
     console.log('initCredits');
@@ -174,25 +205,38 @@ const initCredits = () => {
 
 
 
+/**
+ * Visualizes the vote by updating the visual representation of the credits.
+ *
+ * @param {boolean} inFavor - Whether the vote is in favor or not.
+ * @param {VotingTypes.Motion} motion - The motion being voted on.
+ * @return {void}
+ */
 const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
+    // Get the remaining credits
     let remainingCredits = Vote.value.remainingCredits;
 
+    // Get the number of votes cast
     let votesCast = motion.votes;
+
+    // Calculate the cost based on the number of votes cast
     let cost = calculateCost(motion.votes);
 
+    // If the motion does not have visual credits, create an empty array
     if (!motion.visualCredits) {
         motion.visualCredits = [];
     }
 
+    // Calculate the number of credits to visualize and the number of already visualized credits
     let creditsToVisualize = cost;
     let creditsAlreadyVisualized = motion.visualCredits.length;
 
+    // If there are more credits to visualize than already visualized
     if (creditsToVisualize > creditsAlreadyVisualized) {
-        // there are more credits to visualize than already visualized
-        // get them from the visualCredits array
-
+        // Get the difference between the two numbers
         let difference = creditsToVisualize - creditsAlreadyVisualized;
 
+        // Pop the credits from the visualCredits array and push them to the motion.visualCredits array
         for (let i = 0; i < difference; i++) {
             const credit = visualCredits.value.pop();
 
@@ -204,15 +248,18 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
         // Cache the length of the visualCredits array
         const visualCreditsLength = motion.visualCredits.length;
 
-        // Use a for...of loop to iterate over the visualCredits array
+        // Iterate over the visualCredits array using a for...of loop
         let visualIndex = 1;
         for (const credit of motion.visualCredits) {
             const creditCode = credit.creditCode;
 
+            // Determine whether the vote is in favor or not
             const isFavor = votesCast > 0 ? "f" : "o";
 
+            // Generate the target code for the credit
             const targetCode = `d-${isFavor}-${motion.uuid}-${visualIndex}`;
 
+            // If the target code is different from the credit code, move the credit
             if (targetCode !== creditCode) {
                 moveCredit(creditCode, targetCode);
             }
@@ -220,12 +267,12 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
             visualIndex++;
         }
     }
+    // If there are fewer credits to visualize than already visualized
     else if (creditsToVisualize < creditsAlreadyVisualized) {
-        // there are more credits to visualize than already visualized
-        // get them from the visualCredits array
-
+        // Get the difference between the two numbers
         let difference = creditsAlreadyVisualized - creditsToVisualize;
 
+        // Pop the credits from the motion.visualCredits array and push them to the visualCredits.value array
         for (let i = 0; i < difference; i++) {
             const credit = motion.visualCredits.pop();
 
@@ -237,15 +284,18 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
         // Cache the length of the visualCredits array
         const visualCreditsLength = visualCredits.value.length;
 
-        // Use a for...of loop to iterate over the visualCredits array
+        // Iterate over the visualCredits array using a for...of loop
         let visualIndex = 1;
         for (const credit of visualCredits.value) {
             const creditCode = credit.creditCode;
 
+            // Determine whether the vote is in favor or not
             const isFavor = votesCast > 0 ? "f" : "o";
 
+            // Generate the target code for the credit
             const targetCode = `bg-${visualIndex}`;
 
+            // If the target code is different from the credit code, move the credit
             if (targetCode !== creditCode) {
                 moveCredit(creditCode, targetCode);
             }
@@ -258,26 +308,11 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
 
 
 
-
-
-
-
-
-
-function calcVisualIndex(targetIndex: number, votes: number) {
-    // targetIndex = targetIndex + 1;
-
-    return targetIndex + 1;
-}
-
-
-
-
-
-
-
-
-
+/**
+ * Moves a credit to a new position on the page.
+ * @param {string} selectedCredit - The credit to move.
+ * @param {string} toCode - The target code for the credit.
+ */
 const moveCredit = (selectedCredit: string, toCode: string) => {
     // console.log('moveCredit');
 
@@ -302,64 +337,65 @@ const moveCredit = (selectedCredit: string, toCode: string) => {
     }, 600);
 
 
-    // requestAnimationFrame(updateCredits);
 
 }
 
 
 
+/**
+ * Updates the position of movable credits on the page.
+ * @returns {Promise<void>}
+ */
 const updateCredits = async () => {
 
-    // console.log('updateCredits');
-
-    // get all movable credits
+    // Get all movable credits
     const movableCredits = document.querySelectorAll('.movable');
-    // console.log(movableCredits);
 
-    // iterate over all movable credits
+    // Iterate over all movable credits
     movableCredits.forEach((credit, index) => {
 
-        // get the targetcode
+        // Get the target code
         const targetCode = credit.getAttribute('data-targetCode');
-        // console.log(targetCode);
 
-        // get the target position
+        // Get the target position
         const targetPosition = document.querySelector(`[data-creditCode="${targetCode}"]`);
-        // console.log(targetPosition);
 
+        // If there is no target position, log an error and return
         if (!targetPosition) {
             console.log('no target position', targetCode);
             return;
         }
 
-        // calculate the target position relative to the component
+        // Calculate the target position relative to the component
         const targetRect = targetPosition.getBoundingClientRect();
         let targetTop = targetRect.top;
         let targetLeft = targetRect.left;
 
+        // If the target code starts with 'd', adjust the position by 3 pixels
         if (targetCode && targetCode.startsWith('d')) {
             targetTop += 3;
             targetLeft += 3;
         }
 
-
-
-
-        // set the position of the credit
+        // Set the position of the credit
         (credit as HTMLElement).style.position = 'absolute';
         (credit as HTMLElement).style.top = `${targetTop}px`;
         (credit as HTMLElement).style.left = `${targetLeft}px`;
 
-
-
     });
 
+    // Request the next animation frame to update the credits again
     requestAnimationFrame(updateCredits);
 
 }
 
 
 
+
+/**
+ * Computed property that calculates the total number of votes cast in the election.
+ * @returns {number} The total number of votes cast.
+ */
 const votesCast = computed(() => {
     let votesCast = 0;
 
@@ -369,6 +405,7 @@ const votesCast = computed(() => {
 
     return votesCast;
 });
+
 
 </script>
 

@@ -26,9 +26,9 @@ onMounted(() => {
 
 
 
-   for(let i = 0; i < minIssues; i++) {
-       addIssue();
-   }
+    for (let i = 0; i < minIssues; i++) {
+        addIssue();
+    }
 
 
 });
@@ -49,6 +49,9 @@ const form = useForm({
 });
 
 
+/**
+ * Submits the form data to the server.
+ */
 const submit = () => {
     console.log('submit');
     form.credits = credits.value;
@@ -58,9 +61,15 @@ const submit = () => {
 
 
 
+/**
+ * Generates a UUID (Universally Unique Identifier).
+ * @returns {string} The generated UUID.
+ */
 const createUUID = () => {
+    // Log the function call.
     console.log('createUUID');
 
+    // Generate the UUID using a regular expression.
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
@@ -68,25 +77,36 @@ const createUUID = () => {
 };
 
 
+/**
+ * Updates the credits based on the provided increases flag.
+ *
+ * @param {boolean} increases - Flag indicating if the credits should be increased or decreased.
+ */
 const changeCredits = (increases: boolean) => {
-
+    // Check if the tempCredits is less than or equal to 1 and if increases is false
     if (tempCredits.value <= 1 && !increases) {
         return;
     }
 
+    // Increase or decrease the tempCredits value based on the increases flag
     if (increases) {
         tempCredits.value++;
     } else {
         tempCredits.value--;
     }
 
+    // Update the form credits based on the square of the tempCredits value
     form.credits = Math.pow(tempCredits.value, 2);
-
 };
 
 
 
 
+/**
+ * Adds an issue to the form's motions array if the maximum number of issues has not been reached.
+ *
+ * @return {undefined} No return value
+ */
 const addIssue = () => {
     console.log('addIssue');
 
@@ -103,6 +123,12 @@ const addIssue = () => {
     });
 };
 
+/**
+ * Removes an issue from the form motions array at the specified index.
+ *
+ * @param {number} index - The index of the issue to be removed.
+ * @return {void} This function does not return a value.
+ */
 const removeIssue = (index: number) => {
     console.log('removeIssue');
 
@@ -114,7 +140,13 @@ const removeIssue = (index: number) => {
     form.motions.splice(index, 1);
 };
 
-const moveIssue = (index: number, up : boolean) => {
+/**
+ * Move the issue at the specified index up or down in the form motions array.
+ *
+ * @param {number} index - The index of the issue to be moved.
+ * @param {boolean} up - Whether to move the issue up or down.
+ */
+const moveIssue = (index: number, up: boolean) => {
     console.log('moveIssue');
 
     if (up) {
@@ -134,28 +166,26 @@ const moveIssue = (index: number, up : boolean) => {
     <Head title="Created!" />
 
     <FrontLayout>
-
-
-
-
-
         <h1>"{{ $page.props.election.name }}" has been created</h1>
 
 
 
         <div>
-        <p>Share this link with your commons:</p>
-        <a :href="route('election.vote', $page.props.election.uuid)">{{ route('election.vote', $page.props.election.uuid) }}</a>
-        <br/>
-        <Link :href="route('election.vote', $page.props.election.uuid)" as="button">Go to {{ $page.props.election.name }}</Link>
+            <p>Share this link with your commons:</p>
+            <a :href="route('election.vote', $page.props.election.uuid)">{{ route('election.vote',
+                $page.props.election.uuid) }}</a>
+            <br />
+            <Link :href="route('election.vote', $page.props.election.uuid)" as="button">Go to {{ $page.props.election.name
+            }}</Link>
         </div>
-<br/><br/>
+        <br /><br />
 
         <div>
-        <p>Share this link to view the results:</p>
-        <a :href="route('election.results', $page.props.election.uuid)">{{ route('election.results', $page.props.election.uuid) }}</a>
-        <br/>
-        <Link :href="route('election.results', $page.props.election.uuid)" as="button">See results</Link>
+            <p>Share this link to view the results:</p>
+            <a :href="route('election.results', $page.props.election.uuid)">{{ route('election.results',
+                $page.props.election.uuid) }}</a>
+            <br />
+            <Link :href="route('election.results', $page.props.election.uuid)" as="button">See results</Link>
         </div>
 
     </FrontLayout>

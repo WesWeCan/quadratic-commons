@@ -22,6 +22,11 @@ const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.El
 const myUuid = ref<string>();
 const myVoteCode = ref<string>();
 
+/**
+ * Navigates to the result page if a vote code is provided.
+ *
+ * @return {void}
+ */
 const goToResult = () => {
 
     if (!myVoteCode.value) {
@@ -34,6 +39,11 @@ const goToResult = () => {
     router.visit(toRoute);
 };
 
+/**
+ * Copies the code stored in `page.props.myVoteCode` to the clipboard and displays an alert message.
+ *
+ * @return {undefined} No return value.
+ */
 const copyCode = () => {
 
     if (!page.props.myVoteCode) {
@@ -48,6 +58,12 @@ const copyCode = () => {
 
 
 
+/**
+ * Calculates the netto votes based on the given array of vote results.
+ *
+ * @param {VotingTypes.VoteResult[]} votes - An array of vote results.
+ * @return {number} The total netto votes.
+ */
 const nettoVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
@@ -62,6 +78,12 @@ const nettoVotes = (votes: VotingTypes.VoteResult[]) => {
 };
 
 
+/**
+ * Calculates the total number of votes based on the vote results.
+ *
+ * @param {VotingTypes.VoteResult[]} votes - An array of vote results.
+ * @return {number} The total number of votes.
+ */
 const brutoVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
@@ -73,8 +95,15 @@ const brutoVotes = (votes: VotingTypes.VoteResult[]) => {
     return voteResult;
 };
 
-
+/**
+ * Calculates the number of voters who cast a vote in a given motion.
+ *
+ * @param {VotingTypes.VoteResult[]} votes - An array of vote results.
+ * @param {VotingTypes.Motion} motion - The motion being voted on.
+ * @return {number} The total number of voters who cast a vote.
+ */
 const numVoters = (votes: VotingTypes.VoteResult[], motion: VotingTypes.Motion) => {
+
 
 
     let voteResult = 0;
@@ -91,6 +120,12 @@ const numVoters = (votes: VotingTypes.VoteResult[], motion: VotingTypes.Motion) 
 }
 
 
+/**
+ * Calculates the total number of in-favor votes from an array of vote results.
+ *
+ * @param {VotingTypes.VoteResult[]} votes - An array of vote results.
+ * @return {number} The total number of in-favor votes.
+ */
 const inFavorVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
@@ -104,6 +139,12 @@ const inFavorVotes = (votes: VotingTypes.VoteResult[]) => {
     return voteResult;
 };
 
+/**
+ * Calculates the sum of all negative votes in the given array of vote results.
+ *
+ * @param {VotingTypes.VoteResult[]} votes - The array of vote results.
+ * @return {number} The sum of all negative votes.
+ */
 const opposedVotes = (votes: VotingTypes.VoteResult[]) => {
 
     let voteResult = 0;
@@ -118,6 +159,13 @@ const opposedVotes = (votes: VotingTypes.VoteResult[]) => {
 };
 
 
+/**
+ * Calculates the cumulative credits based on the votes and whether they are in favor or not.
+ *
+ * @param {VotingTypes.VoteResult[]} votes - The array of voting results.
+ * @param {boolean} inFavor - Indicates whether the votes are in favor or not.
+ * @return {number} The cumulative number of credits.
+ */
 const calcCumulativeCredits = (votes: VotingTypes.VoteResult[], inFavor: boolean) => {
 
     let credits = 0;
@@ -140,6 +188,12 @@ const calcCumulativeCredits = (votes: VotingTypes.VoteResult[], inFavor: boolean
 }
 
 
+/**
+ * Returns an array of vote results corresponding to a specific election motion.
+ *
+ * @param {VotingTypes.Motion} elctionMotion - The election motion to search for in the votes.
+ * @return {VotingTypes.VoteResult[]} An array of vote results matching the election motion.
+ */
 const motionVoted = (elctionMotion: VotingTypes.Motion) => {
 
 
@@ -179,18 +233,21 @@ const calcCredits = (votes: number) => {
 
 
 
+/**
+ * This function calculates the election results data.
+ *
+ * @returns The election results data.
+ */
 const ElectionResultsData = () => {
+    // Array to store motion results
+    let motions = [] as VotingTypes.MotionResult[];
 
-
-
-    let motions = [] as VotingTypes.MotionResult[]
-
-
+    // Iterate over each motion in the election
     Election.value.motions.forEach((motion) => {
-
+        // Get the votes for the motion
         const votes = motionVoted(motion);
-        //     ^?
 
+        // Create a motion result object
         let motionResult: VotingTypes.MotionResult = {
             motion_content: (motion as VotingTypes.Motion).content,
             motion_uuid: (motion as VotingTypes.Motion).uuid,
@@ -205,16 +262,17 @@ const ElectionResultsData = () => {
             totalCreditsSpend: calcCumulativeCredits(votes, true) + calcCumulativeCredits(votes, false)
         };
 
+        // Add the motion result to the array
         motions.push(motionResult);
-
     });
 
+    // If there are no votes, return null
     if (!Election.value.votes) {
         return null;
     }
 
+    // Calculate the overall election results
     let results: VotingTypes.ElectionResult = {
-
         motions: motions,
         numVoters: Election.value.votes.length,
         creditsAvailable: maxCredits.value,
@@ -225,18 +283,26 @@ const ElectionResultsData = () => {
         opposedVotes: motions.reduce((a, b) => a + b.opposedVotes, 0),
         totalCreditsSpend: motions.reduce((a, b) => a + b.totalCreditsSpend, 0),
 
+        // Get the motion with the highest netto votes
         nettoWinner: motions.reduce((a, b) => a.nettoVotes > b.nettoVotes ? a : b).motion_uuid,
+        // Get the motion with the lowest netto votes
         nettoLoser: motions.reduce((a, b) => a.nettoVotes < b.nettoVotes ? a : b).motion_uuid,
+        // Get the motion with the most total credits spent
         mostAttention: motions.reduce((a, b) => a.totalCreditsSpend > b.totalCreditsSpend ? a : b).motion_uuid,
     }
 
-
+    // Return the election results
     return results;
-
 };
 
 
-const UuidVote = (motionUuid: string) => {
+/**
+ * Retrieves the vote for a specific motion based on the motion UUID and the user's vote UUID.
+ *
+ * @param {string} motionUuid - The UUID of the motion.
+ * @returns {object|null} - The vote object if found, otherwise null.
+ */
+const getVoteForMotion = (motionUuid: string) => {
 
     const myUuid = page.props.myVoteUuid;
 
@@ -246,7 +312,7 @@ const UuidVote = (motionUuid: string) => {
         return null;
     }
 
-    // find the motion that matches the motionUuid and get the vote from votes array of myUuid
+    // Find the motion that matches the motionUuid
     let motion = results.motions.find((motion) => {
         return motion.motion_uuid === motionUuid;
     });
@@ -255,54 +321,67 @@ const UuidVote = (motionUuid: string) => {
         return null;
     }
 
+    // Get the vote from the votes array of myUuid
     let vote = motion.votes.find((vote) => {
         return vote.vote_uuid === myUuid;
     });
-
 
     if (!vote) {
         return null;
     }
 
-
     return vote;
-
 };
+
 
 
 const sortNetto = ref(true);
 const showStats = ref(false);
 const limitResults = ref(true);
 
+
+
+
+/**
+ * Sorts and limits the election results based on user preferences.
+ *
+ * @returns {object|null} - The sorted and limited election results if available, otherwise null.
+ */
 const sortedResults = computed(() => {
 
+    // Get the election results data
     let results = ElectionResultsData();
 
+    // If there are no results, return null
     if (!results) {
         return null;
     }
 
-
+    // Sort the motions based on nettoVotes or totalCreditsSpend
     if (sortNetto.value) {
+        // Sort by nettoVotes
         results.motions.sort((a, b) => {
             return b.nettoVotes - a.nettoVotes;
         });
     }
     else {
-        // based on credits
+        // Sort by totalCreditsSpend
         results.motions.sort((a, b) => {
             return b.totalCreditsSpend - a.totalCreditsSpend;
         });
     }
 
+    // Limit the number of results if limitResults is true
     if(limitResults.value){
+        // Slice the motions array to get the first 3 elements
         results.motions = results.motions.slice(0, 3);
     }
 
-
+    // Return the sorted results
     return results;
 
 });
+
 
 
 
@@ -317,12 +396,6 @@ const sortedResults = computed(() => {
 
         <!-- ranking -->
         <!-- percentages  -->
-
-
-
-
-
-
 
         <div class="election-results">
 
