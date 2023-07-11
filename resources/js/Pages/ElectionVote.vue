@@ -424,16 +424,17 @@ const votesCast = computed(() => {
 
 
         <section class="election-info">
-        <h1>{{ Election.name }}</h1>
-        <p>{{ Election.description }}</p>
+            <h1>{{ Election.name }}</h1>
+            <p>{{ Election.description }}</p>
 
-        <br />
-        <span>Link to this election: <a :href="route('election.vote', { uuid: Election.uuid })">{{ route('election.vote', {
-            uuid: Election.uuid
-        }) }}</a></span>
+            <br />
+            <span>Link to this election: <a :href="route('election.vote', { uuid: Election.uuid })">{{
+                route('election.vote', {
+                    uuid: Election.uuid
+                }) }}</a></span>
 
-        <label>Name:</label>
-        <input type="text" v-model="Vote.name" />
+            <label>Name:</label>
+            <input type="text" v-model="Vote.name" />
 
         </section>
 
@@ -446,10 +447,11 @@ const votesCast = computed(() => {
 
                 <h2>Credits remaining:</h2>
                 <h2>{{ Vote.remainingCredits }}</h2>
+
                 <h3>Max Credits: {{ Election.credits }}</h3>
 
                 <AllCredits :credits="Election.credits"></AllCredits>
-
+                <button class="reset-button" @click="resetCredits()">Reset</button>
 
                 <br />
 
@@ -485,7 +487,8 @@ const votesCast = computed(() => {
                             <h2>{{ motion.content }}</h2>
 
 
-                            <span>{{ Math.abs(motion.votes) }} Votes | Credits spent: {{ calculateCost(motion.votes) }}</span>
+                            <span>{{ Math.abs(motion.votes) }} Votes | Credits spent: {{ calculateCost(motion.votes)
+                            }}</span>
                         </div>
 
 
@@ -556,8 +559,10 @@ const votesCast = computed(() => {
 
             <div class="right-sidebar sidebar">
                 <div class="results">
-                    <h1>My votes</h1>
-<span>Votes cast: <u :hint="`The more you spread your votes across different issues, the more voting power you exercise. So, don't be afraid to spread your votes around!`">{{ votesCast }}</u></span>
+                    <h2>My votes</h2>
+                    <!-- <span>Votes cast: <u
+                            :hint="`The more you spread your votes across different issues, the more voting power you exercise. So, don't be afraid to spread your votes around!`">{{
+                                votesCast }}</u></span> -->
 
                     <div class="motions-results">
 
@@ -581,7 +586,7 @@ const votesCast = computed(() => {
 
 
 
-                    <button @click="resetCredits()">Reset</button>
+
 
                     <form @submit.prevent="submitForm">
                         <!-- <pre>

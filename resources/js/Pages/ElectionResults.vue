@@ -302,7 +302,7 @@ const ElectionResultsData = () => {
  * @param {string} motionUuid - The UUID of the motion.
  * @returns {object|null} - The vote object if found, otherwise null.
  */
-const getVoteForMotion = (motionUuid: string) => {
+const UuidVote = (motionUuid: string) => {
 
     const myUuid = page.props.myVoteUuid;
 
@@ -336,8 +336,8 @@ const getVoteForMotion = (motionUuid: string) => {
 
 
 const sortNetto = ref(true);
-const showStats = ref(false);
-const limitResults = ref(true);
+const showStats = ref(true);
+const limitResults = ref(false);
 
 
 
@@ -372,7 +372,7 @@ const sortedResults = computed(() => {
     }
 
     // Limit the number of results if limitResults is true
-    if(limitResults.value){
+    if (limitResults.value) {
         // Slice the motions array to get the first 3 elements
         results.motions = results.motions.slice(0, 3);
     }
@@ -437,9 +437,9 @@ const sortedResults = computed(() => {
 
                     <div class="global">
                         <h1>Community voted: ({{ $page.props.election.votes.length }} voters)</h1>
-                        <button @click="showStats = !showStats">{{ showStats ? "Hide" : "Show" }} statistics</button>
+                        <!-- <button @click="showStats = !showStats">{{ showStats ? "Hide" : "Show" }} statistics</button>
                         <button @click="sortNetto = !sortNetto">{{ !sortNetto ? "Sort based on votes" : "Sort based on attention" }}</button>
-                        <button @click="limitResults = !limitResults">{{ limitResults ? "Show all issues" : "Limit to 3 issues" }}</button>
+                        <button @click="limitResults = !limitResults">{{ limitResults ? "Show all issues" : "Limit to 3 issues" }}</button> -->
                     </div>
 
                     <div class="personal" v-if="$page.props.myVoteUuid">
@@ -510,13 +510,14 @@ const sortedResults = computed(() => {
 
                         <div class="vote-data" v-if="showStats">
 
-<div>
-    <span v-tooltip="`Netto votes: in favor minus opposed votes`">{{ UuidVote(motion.motion_uuid)?.votes }} Votes</span>
-    <em>{{ UuidVote(motion.motion_uuid)?.credits
-                        }} Credits spent</em>
-</div>
+                            <div>
+                                <span v-tooltip="`Netto votes: in favor minus opposed votes`">{{
+                                    UuidVote(motion.motion_uuid)?.votes }} Votes</span>
+                                <em>{{ UuidVote(motion.motion_uuid)?.credits
+                                }} Credits spent</em>
+                            </div>
 
-</div>
+                        </div>
 
 
                     </div>
@@ -527,5 +528,4 @@ const sortedResults = computed(() => {
 
 
 
-    </FrontLayout>
-</template>
+    </FrontLayout></template>

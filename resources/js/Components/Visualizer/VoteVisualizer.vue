@@ -156,7 +156,7 @@ const addLayerToTable = (table: any[]): any[] => {
 
         <div class="all-credits visualizer" :class="[{'opposed': props.opposed}, `r-${Math.sqrt(referenceCredits)}`]">
             <div class="credit" v-for="n in correctArray.flat()" :key="n" :title="n.toString()">
-                <svg-icon class="circle credit-bg" type="mdi" :path="mdiCircle" :size="14"
+                <svg-icon class="circle credit-bg" type="mdi" :path="mdiCircle" :size="12"
                     :data-creditCode="`d-${props.code}-${n}`"></svg-icon>
             </div>
 

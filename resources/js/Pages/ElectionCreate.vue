@@ -221,11 +221,11 @@ const moveIssue = (index: number, up: boolean) => {
 
 
 
-            <label for="credits">Spendable credits: {{ form.credits }} {{ form.options.forceSpread ? "-1" : "" }}</label>
+            <label for="credits">Spendable credits: {{ form.options.forceSpread ? form.credits-1 : form.credits }}</label>
 
             <div class="input-group">
                 <input type="checkbox" v-model="form.options.forceSpread">
-                <label>Force voters to spread vote</label>
+                <label>Choose to use {{form.credits-1}} credits</label>
             </div>
 
 

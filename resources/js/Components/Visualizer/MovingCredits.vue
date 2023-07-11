@@ -21,7 +21,7 @@ const props = defineProps({
     <div class="movable-credits">
         <div class="credit movable" v-for="n in props.credits" :key="n" :title="n.toString()"
                 :data-creditCode="`c-${n}`" :data-targetCode="`bg-${n}`">
-                <svg-icon class="circle credit-front" type="mdi" :path="mdiCircle" :size="14"></svg-icon>
+                <svg-icon class="circle credit-front" type="mdi" :path="mdiCircle" :size="12"></svg-icon>
             </div>
     </div>
 
