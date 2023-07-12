@@ -559,7 +559,7 @@ const votesCast = computed(() => {
 
             <div class="right-sidebar sidebar">
                 <div class="results">
-                    <h2>My votes</h2>
+                    <h2>My votes:</h2>
                     <!-- <span>Votes cast: <u
                             :hint="`The more you spread your votes across different issues, the more voting power you exercise. So, don't be afraid to spread your votes around!`">{{
                                 votesCast }}</u></span> -->

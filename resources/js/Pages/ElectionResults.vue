@@ -8,7 +8,7 @@ import { Link, Head, useForm, usePage, router } from '@inertiajs/vue3';
 import * as VotingTypes from '@/types/voting-types';
 
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiThumbDown, mdiThumbUp, mdiThumbsUpDown } from '@mdi/js';
+import { mdiThumbDown, mdiThumbUp, mdiThumbsUpDown, mdiTriangle } from '@mdi/js';
 
 
 const maxCredits = ref<number>(100);
@@ -259,7 +259,7 @@ const ElectionResultsData = () => {
             opposedVotes: opposedVotes(votes),
             inFavorCredits: calcCumulativeCredits(votes, true),
             opposedCredits: calcCumulativeCredits(votes, false),
-            totalCreditsSpend: calcCumulativeCredits(votes, true) + calcCumulativeCredits(votes, false)
+            totalCreditsSpent: calcCumulativeCredits(votes, true) + calcCumulativeCredits(votes, false)
         };
 
         // Add the motion result to the array
@@ -276,19 +276,19 @@ const ElectionResultsData = () => {
         motions: motions,
         numVoters: Election.value.votes.length,
         creditsAvailable: maxCredits.value,
-        creditsSpend: motions.reduce((a, b) => a + b.totalCreditsSpend, 0),
+        creditsSpend: motions.reduce((a, b) => a + b.totalCreditsSpent, 0),
         inFavorCredits: motions.reduce((a, b) => a + b.inFavorCredits, 0),
         opposedCredits: motions.reduce((a, b) => a + b.opposedCredits, 0),
         inFavorVotes: motions.reduce((a, b) => a + b.inFavorVotes, 0),
         opposedVotes: motions.reduce((a, b) => a + b.opposedVotes, 0),
-        totalCreditsSpend: motions.reduce((a, b) => a + b.totalCreditsSpend, 0),
+        totalCreditsSpent: motions.reduce((a, b) => a + b.totalCreditsSpent, 0),
 
         // Get the motion with the highest netto votes
         nettoWinner: motions.reduce((a, b) => a.nettoVotes > b.nettoVotes ? a : b).motion_uuid,
         // Get the motion with the lowest netto votes
         nettoLoser: motions.reduce((a, b) => a.nettoVotes < b.nettoVotes ? a : b).motion_uuid,
         // Get the motion with the most total credits spent
-        mostAttention: motions.reduce((a, b) => a.totalCreditsSpend > b.totalCreditsSpend ? a : b).motion_uuid,
+        mostAttention: motions.reduce((a, b) => a.totalCreditsSpent > b.totalCreditsSpent ? a : b).motion_uuid,
     }
 
     // Return the election results
@@ -357,7 +357,7 @@ const sortedResults = computed(() => {
         return null;
     }
 
-    // Sort the motions based on nettoVotes or totalCreditsSpend
+    // Sort the motions based on nettoVotes or totalCreditsSpent
     if (sortNetto.value) {
         // Sort by nettoVotes
         results.motions.sort((a, b) => {
@@ -365,9 +365,9 @@ const sortedResults = computed(() => {
         });
     }
     else {
-        // Sort by totalCreditsSpend
+        // Sort by totalCreditsSpent
         results.motions.sort((a, b) => {
-            return b.totalCreditsSpend - a.totalCreditsSpend;
+            return b.totalCreditsSpent - a.totalCreditsSpent;
         });
     }
 
@@ -437,8 +437,8 @@ const sortedResults = computed(() => {
 
                     <div class="global">
                         <h1>Community voted: ({{ $page.props.election.votes.length }} voters)</h1>
-                        <!-- <button @click="showStats = !showStats">{{ showStats ? "Hide" : "Show" }} statistics</button>
-                        <button @click="sortNetto = !sortNetto">{{ !sortNetto ? "Sort based on votes" : "Sort based on attention" }}</button>
+                        <!-- <button @click="showStats = !showStats">{{ showStats ? "Hide" : "Show" }} statistics</button> -->
+                        <!-- <button @click="sortNetto = !sortNetto">{{ !sortNetto ? "Sort based on votes" : "Sort based on attention" }}</button>
                         <button @click="limitResults = !limitResults">{{ limitResults ? "Show all issues" : "Limit to 3 issues" }}</button> -->
                     </div>
 
@@ -456,12 +456,13 @@ const sortedResults = computed(() => {
 
                     <!-- {{ motion }} -->
                     <div class="global">
-                        <h2>{{ motion.motion_content }} <svg-icon :size="18" type="mdi" :path="mdiThumbUp"
+                        <h2>{{ motion.motion_content }}
+                            <!-- <svg-icon :size="18" type="mdi" :path="mdiThumbUp"
                                 v-if="sortedResults.nettoWinner === motion.motion_uuid"
                                 v-tooltip="`Highest netto votes`"></svg-icon>
                             <svg-icon :size="18" type="mdi" :path="mdiThumbDown"
                                 v-if="sortedResults.nettoLoser === motion.motion_uuid"
-                                v-tooltip="`Lowest netto votes`"></svg-icon>
+                                v-tooltip="`Lowest netto votes`"></svg-icon> -->
                             <svg-icon :size="18" type="mdi" :path="mdiThumbsUpDown"
                                 v-if="sortedResults.mostAttention === motion.motion_uuid"
                                 v-tooltip="`Most attention based on credits`"></svg-icon>
@@ -471,34 +472,19 @@ const sortedResults = computed(() => {
 
                         <div class="vote-data" v-if="showStats">
 
-                            <div>
-                                <span v-tooltip="`Netto votes: in favor minus opposed votes`">{{ motion.nettoVotes }}
-                                    Votes</span>
-                                <em>{{ motion.totalCreditsSpend }} Total credits spend</em>
-                            </div>
+                            <span>Voting outcome: <strong>{{ motion.nettoVotes }}</strong> (Total credits spent on this issue: <strong>{{ motion.totalCreditsSpent }}</strong>)</span>
 
-                            <div>
-                                Total voters: {{ motion.numVoters }}
-                            </div>
+                            <details>
 
-                            <div>
-                                <span v-tooltip="`Total number of votes cast`">Bruto votes: {{ motion.brutoVotes }}</span>
-                            </div>
+                                <summary><SvgIcon type="mdi" :path="mdiTriangle" :size="24" class="arrow" /></summary>
 
-                            <div>
-                                <span>In favor: {{ motion.inFavorVotes }}
-                                </span>
-                                <em>{{ motion.inFavorCredits }} Credits
-                                    spent</em>
-                            </div>
+                                <div>
+                                    <span>Number of voters: <strong>{{ motion.numVoters }}</strong></span>
+                                    <span>Votes in favor: <strong v-tooltip="`${motion.inFavorCredits} credits spent`">{{ motion.inFavorVotes }}</strong> | Votes opposed: <strong v-tooltip="`${motion.opposedCredits} credits spent`">{{ motion.opposedVotes }}</strong> (Gross votes: <strong>{{ motion.brutoVotes }}</strong>)</span>
+                                </div>
 
 
-                            <div>
-                                <span>opposed: {{ motion.opposedVotes }}</span>
-                                <em>{{ motion.opposedCredits }} Credits
-                                    spent</em>
-
-                            </div>
+                            </details>
 
                         </div>
 

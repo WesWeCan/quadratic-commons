@@ -21,7 +21,7 @@ export interface MotionResult {
     opposedVotes: number;
     inFavorCredits: number;
     opposedCredits: number;
-    totalCreditsSpend: number;
+    totalCreditsSpent: number;
 }
 
 export interface ElectionOptions {
@@ -61,7 +61,7 @@ export interface ElectionResult {
     opposedVotes: number;
     inFavorCredits: number;
     opposedCredits: number;
-    totalCreditsSpend: number;
+    totalCreditsSpent: number;
 
     nettoWinner: string | null;
     nettoLoser: string | null;

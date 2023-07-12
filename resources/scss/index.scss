@@ -79,7 +79,7 @@ a {
 h1 {
     font-size: 1.8em;
     margin-bottom: 1rem;
-    font-weight: bold;
+
 
     font-family: 'Cambo', serif;
 }
@@ -87,7 +87,7 @@ h1 {
 h2 {
     font-size: 1.3em;
     margin-bottom: 1rem;
-    font-weight: bold;
+
 
     font-family: 'Cambo', serif;
 }
@@ -162,6 +162,11 @@ table {
                 display: flex;
                 flex-direction: column;
                 text-align: center;
+
+                h2 {
+                    font-size: 1.8em;
+                    margin-bottom: 0;
+                }
             }
 
             .motion-body {
@@ -419,7 +424,7 @@ table {
     display: grid;
     /* auto columns max with */
 
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 0;
 
     margin-top: 2rem;
@@ -474,6 +479,16 @@ table {
 }
 
 .election-results {
+
+    .election-results__header {
+
+        h1 {
+            margin-bottom: 0;
+        }
+
+    }
+
+
     .election-results__body {
         display: flex;
         flex-direction: column;
@@ -516,6 +531,7 @@ table {
         display: flex;
         flex-direction: column;
         margin-top: 1rem;
+        gap: 1rem;
 
         div {
             display: flex;
@@ -526,6 +542,45 @@ table {
                 align-self: flex-start;
             }
         }
+
+
+
+        details {
+            padding-bottom: 1rem;
+
+            summary {
+                list-style-type: none;
+            }
+
+
+            .arrow {
+                transition: all 0.25s ease-in-out;
+                cursor: pointer;
+
+                transform: rotate(90deg);
+                color: gray;
+
+                &:hover {
+                    color: black;
+                }
+            }
+
+            div {
+                padding-top: 1rem;
+                display: flex;
+                flex-direction: column;
+                grid-gap: .25rem;
+            }
+
+
+            &[open] {
+                .arrow {
+                    transform: rotate(180deg);
+                }
+            }
+
+        }
+
     }
 }
 
@@ -553,7 +608,7 @@ input[type='checkbox'] {
 
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 1rem;
 
     justify-content: center;
     align-items: center;
@@ -600,4 +655,16 @@ input[type='checkbox'] {
 .reset-button {
     margin-top: 1rem;
     margin-bottom: 2rem;
+}
+
+
+
+
+.right-sidebar .results h2 {
+    padding-left: 5px;
+}
+
+
+.left-sidebar > h2:first-child {
+    margin-bottom: 0;
 }

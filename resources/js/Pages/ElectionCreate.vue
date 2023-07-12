@@ -230,7 +230,7 @@ const moveIssue = (index: number, up: boolean) => {
 
 
             <div class="credits-form">
-                <input type="number" id="credits" v-model="form.credits" disabled />
+                <input type="number" id="credits" :value="form.options.forceSpread ? form.credits-1 : form.credits" disabled />
                 <button @click.prevent="changeCredits(true)" :disabled="tempCredits >= maxTempCredits"><svg-icon
                         class="circle credit-bg" type="mdi" :path="mdiPlus" :size="14"></svg-icon> Add credits</button>
                 <button @click.prevent="changeCredits(false)" :disabled="tempCredits <= minTempCredits"><svg-icon
