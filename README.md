@@ -11,6 +11,9 @@ Charging the Commons is a 2-year project that investigates the design of digital
 
 This quadratic voting prototype was created for the workshop Design for collective decision-making is part of the research project Charging the Commons, a cooperation between Amsterdam University of Applied Sciences (Civic Interaction Design) and Avans University of Applied Sciences (Situated Art & Design)
 
+### [Take a look at the demo](https://quadratic-commons.nl)
+
+
 ## Table of Contents
 
 - [Installation](#installation)
