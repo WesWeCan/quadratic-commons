@@ -1,10 +1,6 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue';
-
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiCircle } from '@mdi/js';
-
 
 const props = defineProps({
     credits: {
@@ -23,16 +19,8 @@ const props = defineProps({
                 :data-creditCode="`bg-${n}`">
                 <svg-icon class="circle credit-bg" type="mdi" :path="mdiCircle" :size="12"></svg-icon>
             </div>
-
-            <!-- <div class="credit movable" v-for="n in props.credits" :key="n" :title="n.toString()"
-                :data-creditCode="`c-${n}`" :data-targetCode="`bg-${n}`">
-                <svg-icon class="circle credit-front" type="mdi" :path="mdiCircle" size="14"></svg-icon>
-            </div> -->
         </div>
     </div>
-
-
-
 </template>
 
 

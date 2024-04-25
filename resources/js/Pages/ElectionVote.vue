@@ -12,8 +12,6 @@ import MovingCredits from '@/Components/Visualizer/MovingCredits.vue';
 import Tutorial from '@/Components/Tutorial.vue';
 import { computed } from 'vue';
 
-
-
 const page = usePage();
 
 const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.Election);
@@ -40,14 +38,7 @@ onMounted(() => {
 
     initCredits();
 
-    // if(Election.value.options.forceSpread) {
-    //     console.log('forceSpread');
-    //     Vote.value.remainingCredits = Election.value.credits;
-    // }
-
-
     requestAnimationFrame(updateCredits);
-
 
 });
 
@@ -81,8 +72,6 @@ const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
         return;
     }
 
-
-
     // Updates the vote count for the motion
     if (inFavor) {
         motion.votes++;
@@ -91,9 +80,7 @@ const castVote = (motion: VotingTypes.Motion, inFavor: boolean) => {
         motion.votes--;
     }
 
-
     visualizeVote(inFavor, motion);
-
     motion.credits = calculateCost(motion.votes);
 }
 
@@ -117,9 +104,8 @@ const calculateCost = (votes: number) => {
 
 /**
  * Calculates the number of votes based on the given credits.
- *
  * @param {number} credits - The number of credits.
- * @return {number} The calculated number of votes.
+ * @returns {number} - The calculated number of votes.
  */
 const calculateVotesInterger = (credits: number) => {
 
@@ -136,16 +122,9 @@ const calculateVotesInterger = (credits: number) => {
 };
 
 
-
-
-
-
-
 /**
- * Resets the credits for all motions in the Vote value.
- *
- * @param {type} paramName - description of parameter
- * @return {type} description of return value
+ * Resets the credits for each motion in the vote.
+ * For each motion, it casts votes in the opposite direction of the current votes.
  */
 const resetCredits = () => {
     Vote.value.motions.forEach((motion) => {
@@ -158,7 +137,6 @@ const resetCredits = () => {
         }
     });
 }
-
 
 
 /**
@@ -179,9 +157,6 @@ const submitForm = () => {
 }
 
 
-
-
-
 /**
  * Initializes the visual credits array with the number of credits available for the election.
  * Each credit is represented by an object with a unique creditCode and targetCode.
@@ -191,9 +166,6 @@ const submitForm = () => {
  * @return {void}
  */
 const initCredits = () => {
-
-    console.log('initCredits');
-
     for (let i = 1; i <= Election.value.credits; i++) {
         visualCredits.value.push({
             creditCode: `c-${i}`,
@@ -204,7 +176,6 @@ const initCredits = () => {
 }
 
 
-
 /**
  * Visualizes the vote by updating the visual representation of the credits.
  *
@@ -213,9 +184,6 @@ const initCredits = () => {
  * @return {void}
  */
 const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
-    // Get the remaining credits
-    let remainingCredits = Vote.value.remainingCredits;
-
     // Get the number of votes cast
     let votesCast = motion.votes;
 
@@ -245,7 +213,7 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
             }
         }
 
-        // Cache the length of the visualCredits array
+        // Cache the length of the visualCredits array in memory
         const visualCreditsLength = motion.visualCredits.length;
 
         // Iterate over the visualCredits array using a for...of loop
@@ -267,6 +235,8 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
             visualIndex++;
         }
     }
+
+
     // If there are fewer credits to visualize than already visualized
     else if (creditsToVisualize < creditsAlreadyVisualized) {
         // Get the difference between the two numbers
@@ -306,21 +276,14 @@ const visualizeVote = async (inFavor: boolean, motion: VotingTypes.Motion) => {
 };
 
 
-
-
 /**
  * Moves a credit to a new position on the page.
  * @param {string} selectedCredit - The credit to move.
  * @param {string} toCode - The target code for the credit.
  */
 const moveCredit = (selectedCredit: string, toCode: string) => {
-    // console.log('moveCredit');
-
-
     // select the credit with data-creditCode c-25
     const creditToMove = document.querySelector(`[data-creditCode="${selectedCredit}"]`);
-    // console.log(creditToMove);
-
 
     if (!creditToMove) {
         console.log('no credit to move');
@@ -335,11 +298,7 @@ const moveCredit = (selectedCredit: string, toCode: string) => {
     setTimeout(() => {
         creditToMove.classList.remove('in-transition');
     }, 600);
-
-
-
 }
-
 
 
 /**
@@ -390,8 +349,6 @@ const updateCredits = async () => {
 }
 
 
-
-
 /**
  * Computed property that calculates the total number of votes cast in the election.
  * @returns {number} The total number of votes cast.
@@ -406,22 +363,16 @@ const votesCast = computed(() => {
     return votesCast;
 });
 
-
 </script>
 
 
 <template>
+
     <Head :title="($page.props.election as VotingTypes.Election).name" />
 
     <FrontLayout>
-
         <MovingCredits :credits="Election.credits"></MovingCredits>
-
-
-
         <Tutorial :credits="Election.credits"></Tutorial>
-
-
 
         <section class="election-info">
             <h1>{{ Election.name }}</h1>
@@ -431,20 +382,15 @@ const votesCast = computed(() => {
             <span>Link to this election: <a :href="route('election.vote', { uuid: Election.uuid })">{{
                 route('election.vote', {
                     uuid: Election.uuid
-                }) }}</a></span>
-
-            <label>Name:</label>
+                    }) }}</a></span>
+            <label>Your name: <em>(not required)</em></label>
             <input type="text" v-model="Vote.name" />
-
         </section>
 
         <section class="election">
 
 
             <div class="left-sidebar sidebar">
-
-
-
                 <h2>Credits remaining:</h2>
                 <h2>{{ Vote.remainingCredits }}</h2>
 
@@ -452,9 +398,7 @@ const votesCast = computed(() => {
 
                 <AllCredits :credits="Election.credits"></AllCredits>
                 <button class="reset-button" @click="resetCredits()">Reset</button>
-
                 <br />
-
                 <table class="cost-calculation">
                     <thead>
                         <tr>
@@ -468,56 +412,38 @@ const votesCast = computed(() => {
                         </tr>
                     </tbody>
                 </table>
-
-                <!-- <pre>{{
-                    visualCredits
-                }}</pre> -->
             </div>
 
             <main>
                 <div class="motions">
 
                     <div class="motion" v-for="(motion, index) in Vote.motions" :key="index">
-
-
-
-
                         <div class="motion-header">
-
                             <h2>{{ motion.content }}</h2>
-
-
                             <span>{{ Math.abs(motion.votes) }} Votes | Credits spent: {{ calculateCost(motion.votes)
-                            }}</span>
+                                }}</span>
                         </div>
 
 
                         <div class="motion-body">
-
-
-
                             <div class="motion-body-container favor">
                                 <VoteVisualizer :code="`f-${motion.uuid}`" :credits="Election.credits"
                                     :force-spread="Election.options.forceSpread"></VoteVisualizer>
                             </div>
 
                             <div class="motion-body-container container-center">
-
-
                                 <div class="container-center-body">
                                     <div class="question-number">
                                         <strong>Issue #{{ index + 1 }}</strong>
                                     </div>
 
                                     <div class="button-containers">
-
                                         <div class="favor button-container">
-
                                             <button @click="castVote(motion, true)">
-                                                {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'More') : 'Fewer' }}
+                                                {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'More') : 'Fewer'
+                                                }}
                                             </button>
                                             <strong>In favor</strong>
-
                                         </div>
 
                                         <div class="line"></div>
@@ -525,33 +451,21 @@ const votesCast = computed(() => {
                                         <div class="opposed button-container">
 
                                             <button @click="castVote(motion, false)">
-                                                {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'Fewer') : 'More' }}
+                                                {{ motion.votes >= 0 ? (motion.votes === 0 ? 'Vote' : 'Fewer') : 'More'
+                                                }}
                                             </button>
                                             <strong>Opposed</strong>
                                         </div>
-
                                     </div>
-
-
                                 </div>
                             </div>
-
 
                             <div class="motion-body-container opposed">
                                 <VoteVisualizer :code="`o-${motion.uuid}`" :opposed="true" :credits="Election.credits"
                                     :force-spread="Election.options.forceSpread">
                                 </VoteVisualizer>
                             </div>
-
-
-
-
-
                         </div>
-
-                        <!--
-                        <pre>{{ motion.visualCredits?.length || 0 }} {{ motion.visualCredits }}</pre> -->
-
                     </div>
                 </div>
 
@@ -560,9 +474,6 @@ const votesCast = computed(() => {
             <div class="right-sidebar sidebar">
                 <div class="results">
                     <h2>My votes:</h2>
-                    <!-- <span>Votes cast: <u
-                            :hint="`The more you spread your votes across different issues, the more voting power you exercise. So, don't be afraid to spread your votes around!`">{{
-                                votesCast }}</u></span> -->
 
                     <div class="motions-results">
 
@@ -573,38 +484,18 @@ const votesCast = computed(() => {
                         </div>
 
                         <div class="motion-result" v-for="(motion, index) in Vote.motions" :key="index">
-
-
                             <span>{{ motion.votes > 0 ? motion.votes : "-" }} </span>
                             <span>#{{ index + 1 }}</span>
                             <span>{{ motion.votes < 0 ? Math.abs(motion.votes) : "-" }}</span>
-
-
-
                         </div>
                     </div>
 
-
-
-
-
                     <form @submit.prevent="submitForm">
-                        <!-- <pre>
-{{ form.errors }}
-</pre> -->
-
                         <button type="submit">Submit</button>
                     </form>
-
-
-
-
-
                 </div>
             </div>
         </section>
 
     </FrontLayout>
 </template>
-
-

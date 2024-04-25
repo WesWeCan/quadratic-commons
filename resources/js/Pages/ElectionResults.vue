@@ -18,7 +18,6 @@ const page = usePage();
 
 const Election = ref<VotingTypes.Election>(page.props.election as VotingTypes.Election);
 
-
 const myUuid = ref<string>();
 const myVoteCode = ref<string>();
 
@@ -34,7 +33,6 @@ const goToResult = () => {
     }
 
     let toRoute = route('election.results.code', { uuid: page.props.election.uuid, votecode: myVoteCode.value });
-
 
     router.visit(toRoute);
 };
@@ -55,7 +53,6 @@ const copyCode = () => {
 
     alert('copied');
 };
-
 
 
 /**
@@ -95,6 +92,7 @@ const brutoVotes = (votes: VotingTypes.VoteResult[]) => {
     return voteResult;
 };
 
+
 /**
  * Calculates the number of voters who cast a vote in a given motion.
  *
@@ -103,9 +101,6 @@ const brutoVotes = (votes: VotingTypes.VoteResult[]) => {
  * @return {number} The total number of voters who cast a vote.
  */
 const numVoters = (votes: VotingTypes.VoteResult[], motion: VotingTypes.Motion) => {
-
-
-
     let voteResult = 0;
 
     votes.forEach((vote) => {
@@ -115,7 +110,6 @@ const numVoters = (votes: VotingTypes.VoteResult[], motion: VotingTypes.Motion) 
     });
 
     return voteResult;
-
 
 }
 
@@ -138,6 +132,7 @@ const inFavorVotes = (votes: VotingTypes.VoteResult[]) => {
 
     return voteResult;
 };
+
 
 /**
  * Calculates the sum of all negative votes in the given array of vote results.
@@ -226,11 +221,9 @@ const motionVoted = (elctionMotion: VotingTypes.Motion) => {
 };
 
 
-
 const calcCredits = (votes: number) => {
     return Math.pow(votes, 2);
 }
-
 
 
 /**
@@ -340,8 +333,6 @@ const showStats = ref(true);
 const limitResults = ref(false);
 
 
-
-
 /**
  * Sorts and limits the election results based on user preferences.
  *
@@ -392,38 +383,30 @@ const sortedResults = computed(() => {
     <Head :title="($page.props.election as VotingTypes.Election).name" />
 
     <FrontLayout>
-
-
-        <!-- ranking -->
-        <!-- percentages  -->
-
         <div class="election-results">
-
-
             <div class="election-results__header">
                 <h1>Results: {{ Election.name }}</h1>
                 <p>{{ Election.description }}</p>
             </div>
 
-
             <div v-if="$page.props.myVoteCode">
-
                 <form>
-                    <label>My vote code</label>
+                    <h2>My vote code</h2>
+                    <p>
+                        Share this code / link with others to compare your votes.
+                    </p>
                     <input type="text" :disabled="true" :value="$page.props.myVoteCode" />
+                    <Link :href="route('election.results.code', { uuid: $page.props.election.uuid, votecode: $page.props.myVoteCode })">{{ route('election.results.code', { uuid: $page.props.election.uuid, votecode: $page.props.myVoteCode }) }}</Link>
                     <button @click.prevent="() => copyCode()">Copy</button>
                 </form>
-
             </div>
 
             <div v-if="!$page.props.myVoteUuid">
-
                 <form @submit.prevent="goToResult()">
                     <label>Enter you vote code to compare your votes</label>
                     <input type="text" v-model="myVoteCode" />
                     <button type="submit">Go</button>
                 </form>
-
             </div>
 
             <div class="election-results__body">

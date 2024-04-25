@@ -1,10 +1,6 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue';
-
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiCircle } from '@mdi/js';
-
 
 const props = defineProps({
     credits: {
@@ -12,7 +8,6 @@ const props = defineProps({
         required: true,
     },
 })
-
 </script>
 
 
@@ -24,9 +19,6 @@ const props = defineProps({
                 <svg-icon class="circle credit-front" type="mdi" :path="mdiCircle" :size="12"></svg-icon>
             </div>
     </div>
-
-
-
 </template>
 
 
