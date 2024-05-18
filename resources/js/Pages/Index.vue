@@ -32,11 +32,7 @@ onMounted(() => {
         <section class="tutorial">
             <article>
                 <h1>Quadratic Commons</h1>
-                <p>Quadratic Voting is a collective decision-making process that allows you to express the intensity of
-                    your preferences on a number of issues. Instead of a typical 'A/B' vote, you will spread your votes
-                    across different issues to exercise more voting power. The more you spread your votes, the more
-                    voting power you exercise, thanks to the quadratic mathematics behind the process. This encourages
-                    all voters to compromise and ensures that the group's preferences are accurately represented.</p>
+                <p>Quadratic Voting is a collective decision-making procedure that allows you to express the intensity of your preferences on a number of issues. Each voter receives voting credits to spread across several ballot issues. The more a voter spreads their votes, the more voting power is exercised, thanks to the quadratic mathematics behind the procedure. This encourages all voters to compromise and ensures that the group's preferences are accurately represented.</p>
             </article>
 
 
@@ -63,20 +59,18 @@ onMounted(() => {
         <section class="tutorial">
         <article>
                 <h2>About Charging the Commons</h2>
-                <p>Charging the Commons is a 2-year project that investigates the design of digital platforms for
-                    resource communities. The project explores how a Situated-design approach can be employed to
-                    articulate the (social) values of resource communities. In addition, the project examines how these
-                    values can be translated into a design for the management of an urban commons. </p>
+                <p><a href="https://circulateproject.nl/">Charging the Commons</a> is a 2-year project that investigates the design of digital platforms for resource communities. The project explores how Situated Design can articulate the values of resource communities- and examines how these values can be translated into designs for the urban commons.</p>
 
-                <p>This quadratic voting prototype was created for the workshop Design for collective decision-making is
-                    part of the research project Charging the Commons, a cooperation between Amsterdam University of
-                    Applied Sciences (Civic Interaction Design) and Avans University of Applied Sciences (Situated Art &
-                    Design)</p>
+                <p>This quadratic voting prototype was designed for the workshop Design for Collective Decision-Making, in cooperation with the <a href="https://www.clthbuurt.nl/">Community Land Trust H-buurt</a> (Bijlmer, Amsterdam).</p>
+
+                <p>Charging the Commons is a cooperation between Amsterdam University of Applied Sciences (<a href="https://civicinteractiondesign.com/">Civic Interaction Design</a>) and Avans University of Applied Sciences (<a href="https://caradt.nl/research-group/situated-art-and-design/">Situated Art & Design</a>).</p>
 
                 <div class="ratio-16-9">
                     <iframe :src="`https://www.youtube.com/embed/n0CEpT7ZOEo`" frameborder="0"
                         allow="autoplay; encrypted-media" allowfullscreen="true" class="ratio-inner"></iframe>
                 </div>
+
+                <small>Also, see the in-depth conversation about '<a href="https://dezwijger.nl/programma/designing-for-resource-sharing-communities">Designing for Resource Sharing Communities</a>' from Pakhuis de Zwijger.</small>
             </article>
         </section>
 
