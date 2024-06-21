@@ -1,6 +1,14 @@
 {
+    "name": "quadratic-commons",
+    "version": "1.0.0",
+    "description": "Quadratic Voting is a collective decision-making procedure that allows you to express the intensity of your preferences on a number of issues. It is a voting system that allows you to express not just which option you prefer, but how much you prefer it.",
+    "license": "CC-BY-4.0",
     "private": true,
     "type": "module",
+    "author": {
+        "name": "Wesley Hartogs",
+        "url": "https://creativetechnologist.nl"
+    },
     "scripts": {
         "dev": "vite",
         "build": "vue-tsc && vite build"

@@ -3,7 +3,10 @@
 [![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
 
 ## Description
-Quadratic Voting is a collective decision-making procedure that allows you to express the intensity of your preferences on a number of issues. Each voter receives voting credits to spread across several ballot issues. The more a voter spreads their votes, the more voting power is exercised, thanks to the quadratic mathematics behind the procedure. This encourages all voters to compromise and ensures that the group's preferences are accurately represented.
+Quadratic Voting is a collective decision-making procedure that allows you to express the intensity of your preferences on a number of issues. Each voter receives credits to spread across several ballot issues. The more a voter spreads their votes, the more voting power is exercised, thanks to the quadratic mathematics behind the procedure. This encourages all voters to compromise and ensures that the group's preferences are accurately represented.
+
+### Context
+Our QV tool was designed to experiment with commons communities, who need to make many collective decisions together about multiple issues. Situated research using QV is still scarce, and we noticed many existing interfaces are too complex for use with novice communities, and/or fail to point to specific voting outcomes. To address this, we designed our own QV prototype in which we added ‘badges’ to the results page. These indicate, for instance, which issues received the most attention (as this might not be the number one ranked issue) and when an issue is polarizing. In this way, our QV tool can work like a radar, by detecting levels of friction in the voting outcomes and tagging these on the results page. By flagging these outcomes our tool can help to whittle down the ballot, and help communities transition into more focused rounds of deliberation.
 
 ## About Charging the Commons
 [Charging the Commons](https://circulateproject.nl/) is a 2-year project that investigates the design of digital platforms for resource communities. The project explores how Situated Design can articulate the values of resource communities- and examines how these values can be translated into designs for the urban commons.
@@ -91,12 +94,28 @@ If you prefer to use Yarn as your package manager, you can follow these addition
     ```
 
 
+
+## Supporting material
+
+### Program in Pakhuis de Zwijger (31 May 2024)
+*More and more citizens are coming together to share and manage their resources collectively. When new commons communities emerge, they face a remarkable challenge: deciding on a means to make decisions together.*
+
+[LINK: Design for collective decision making, Wed 31 May 2024](https://dezwijger.nl/programma/designing-for-resource-sharing-communities)
+
+
+### Short Film Documenting the Workshop 'Design for Collective Decision-Making'
+
+[LINK: Watch our video](https://www.youtube.com/embed/n0CEpT7ZOEo)
+
 ## Credits & References
-[Design for collective decision making, Wed 31 2024](https://dezwijger.nl/programma/designing-for-resource-sharing-communities)
 
-[The interactive Economist article A Square Vote inspired elements of our interface, especially the flying credit.](https://www.economist.com/interactive/2021/12/18/quadratic-voting)
+### Article from the Economist (Inspriation for the flying credits)
 
-[RadicalXchange, Glen Weyl & Jack Henderson](https://www.radicalxchange.org/)
+[LINK: The interactive Economist article A Square Vote inspired elements of our interface, especially the flying credit.](https://www.economist.com/interactive/2021/12/18/quadratic-voting)
+
+
+### Learn more about RadicalXchange and quadratic voting.
+[LINK: RadicalXchange](https://www.radicalxchange.org/)
 
 
 
