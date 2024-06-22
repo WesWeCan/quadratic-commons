@@ -15,16 +15,36 @@ This quadratic voting prototype was designed for the workshop Design for Collect
 
 Charging the Commons is a cooperation between Amsterdam University of Applied Sciences ([Civic Interaction Design](https://civicinteractiondesign.com/)) and Avans University of Applied Sciences ([Situated Art & Design](https://caradt.nl/research-group/situated-art-and-design/)).
 
+
+## DEMO
 ### [Take a look at the demo](https://quadratic-commons.org)
 
 
-## Table of Contents
+## Supporting material
 
-- [Installation](#installation)
-- [Technology](#technology)
-- [License](#license)
+### Program in Pakhuis de Zwijger (31 May 2024)
+*More and more citizens are coming together to share and manage their resources collectively. When new commons communities emerge, they face a remarkable challenge: deciding on a means to make decisions together.*
 
-## Technology
+[LINK: Design for collective decision making, Wed 31 May 2024](https://dezwijger.nl/programma/designing-for-resource-sharing-communities)
+
+
+### Short Film Documenting the Workshop 'Design for Collective Decision-Making'
+
+[LINK: Watch our video](https://www.youtube.com/embed/n0CEpT7ZOEo)
+
+## Credits & References
+
+### Article from the Economist (Inspriation for the flying credits)
+
+[LINK: The interactive Economist article A Square Vote inspired elements of our interface, especially the flying credit.](https://www.economist.com/interactive/2021/12/18/quadratic-voting)
+
+
+### Learn more about RadicalXchange and quadratic voting.
+[LINK: RadicalXchange](https://www.radicalxchange.org/)
+
+
+
+# Technology
 This project uses the following technologies:
 - Laravel (v10.10)
 - PHP (Version 8.1 or higher)
@@ -92,32 +112,6 @@ If you prefer to use Yarn as your package manager, you can follow these addition
     ```
     yarn dev
     ```
-
-
-
-## Supporting material
-
-### Program in Pakhuis de Zwijger (31 May 2024)
-*More and more citizens are coming together to share and manage their resources collectively. When new commons communities emerge, they face a remarkable challenge: deciding on a means to make decisions together.*
-
-[LINK: Design for collective decision making, Wed 31 May 2024](https://dezwijger.nl/programma/designing-for-resource-sharing-communities)
-
-
-### Short Film Documenting the Workshop 'Design for Collective Decision-Making'
-
-[LINK: Watch our video](https://www.youtube.com/embed/n0CEpT7ZOEo)
-
-## Credits & References
-
-### Article from the Economist (Inspriation for the flying credits)
-
-[LINK: The interactive Economist article A Square Vote inspired elements of our interface, especially the flying credit.](https://www.economist.com/interactive/2021/12/18/quadratic-voting)
-
-
-### Learn more about RadicalXchange and quadratic voting.
-[LINK: RadicalXchange](https://www.radicalxchange.org/)
-
-
 
 ## License
 
