@@ -116,3 +116,5 @@ If you prefer to use Yarn as your package manager, you can follow these addition
 ## License
 
 This project is licensed under the [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
